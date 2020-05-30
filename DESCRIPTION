@@ -1,0 +1,22 @@
+Package: NILE
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Rune",
+           family = "Christiansen",
+           role = c("aut", "cre"),
+           email = "krunechristiansen@math.ku.dk",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: What the package does (one paragraph).
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+Imports: 
+    MASS,
+    fda,
+    cvTools,
+    ggplot2,
+    expm,
+    gridExtra

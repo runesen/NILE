@@ -1,10 +1,16 @@
-library(fda)
-library(cvTools)
-library(ggplot2)
-library(MASS)
-library(expm)
-theme_set(theme_bw())
 
+# library(fda)
+# library(cvTools)
+# library(ggplot2)
+# library(MASS)
+# library(expm)
+# !!! to move inside the functions
+# theme_set(theme_bw())
+
+
+#'
+#'
+#'
 NILE <- function(Y, X, A, lambda.nile,
                  intercept = TRUE,
                  df = 100,
@@ -16,10 +22,10 @@ NILE <- function(Y, X, A, lambda.nile,
                  par.a = list(),
                  par.cv = list(num.folds = 10, optim = "optimize")
 ){
-  
+
   n <- length(Y)
   dA <- ifelse(is.vector(A), 1, ncol(A))
-  
+
   # set missing parameters to default
   if(!exists("intercept")){
     intercept <- TRUE
@@ -58,13 +64,13 @@ NILE <- function(Y, X, A, lambda.nile,
   if(!exists("n.grid",par.cv)){
     par.cv$n.grid <- 20
   }
-  
+
   # in all other cases, the OLS obective will force small residuals, so intercept in regression on A not needed
   intercept.A <- lambda.nile == Inf
-  
+
   # create basis object for A
-  BA <- create.base(x=A, num.breaks=par.a$num.breaks, breaks=par.a$breaks, 
-                    n.order=par.a$n.order, pen.degree=par.a$pen.degree, lambda=par.a$lambda, 
+  BA <- create.base(x=A, num.breaks=par.a$num.breaks, breaks=par.a$breaks,
+                    n.order=par.a$n.order, pen.degree=par.a$pen.degree, lambda=par.a$lambda,
                     intercept = intercept.A, type = "pspline")
   if(is.null(BA$lambda)){
     # choose lambdaA to minimize out-of-sample MSE for OLS residuals
@@ -74,30 +80,30 @@ NILE <- function(Y, X, A, lambda.nile,
     BA <- cv.lambda(Y=R, BX=BA, BA=BA, lambda.nile=0, par.cv) # minimizes out-of-sample AR objective, here with lambda.nile=0, i.e., OLS error
     print(paste("lambda.cv.a = ", BA$lambda))
   }
-  
+
   # create basis object for X
-  BX <- create.base(x=X, num.breaks=par.x$num.breaks, breaks=par.x$breaks, 
-                    n.order=par.x$n.order, pen.degree=par.x$pen.degree, lambda=par.x$lambda, 
+  BX <- create.base(x=X, num.breaks=par.x$num.breaks, breaks=par.x$breaks,
+                    n.order=par.x$n.order, pen.degree=par.x$pen.degree, lambda=par.x$lambda,
                     intercept = intercept, type = "pspline")
   if(is.numeric(lambda.nile)){
     if(is.null(BX$lambda)){
       # choose lambdaX to minimize out-of-sample AR-objective
-      BX <- cv.lambda(Y, BX, BA, lambda.nile, par.cv) 
+      BX <- cv.lambda(Y, BX, BA, lambda.nile, par.cv)
       print(paste("lambda.cv.x = ", BX$lambda))
     }
   }
-  
+
   if(lambda.nile == "test"){
     if(is.null(BX$lambda)){
       # first choose lambdaX to minimize MSPE
-      BX <- cv.lambda(Y, BX, BA, lambda.nile=0, par.cv) 
+      BX <- cv.lambda(Y, BX, BA, lambda.nile=0, par.cv)
       print(paste("lambda.cv.x = ", BX$lambda))
       lambda.nile <- binary.search.lambda(Y, BX, BA, p.min)
       print(paste("lambda.nile.p.uncorr = ", lambda.nile))
     }
     BX$lambda <- (1+lambda.nile)*BX$lambda
   }
-  
+
   # fit AR model
   out <- ar.fit(Y, BX, BA, lambda.nile, p.min)
   obj <- ar.objective(Y, BX, BA, lambda.nile, out$coefficients)
@@ -111,16 +117,16 @@ NILE <- function(Y, X, A, lambda.nile,
   out$A <- A
   if(!is.null(x.new)){
     out$pred <- predict(out, x.new)
-  } 
+  }
   if(plot) plot(out, x.new, f.true)
   out
 }
 
 
 create.base <- function(x, num.breaks=3, breaks=NULL, n.order=4, pen.degree=2, lambda=NULL, basis=NULL, intercept = TRUE, type = "pspline"){
-  
+
   d <- ifelse(is.vector(x),1,ncol(x))
-  
+
   if(type == "pspline"){
     if(is.null(basis)){ # if a basis is supplied, simply store the new data x
       if(d==1){
@@ -134,16 +140,16 @@ create.base <- function(x, num.breaks=3, breaks=NULL, n.order=4, pen.degree=2, l
       }
       if(d==2){
         if(is.null(breaks)){
-          breaks <- list(quantile(x[,1], probs = seq(0,1,length.out = num.breaks[1])), 
+          breaks <- list(quantile(x[,1], probs = seq(0,1,length.out = num.breaks[1])),
                          quantile(x[,2], probs = seq(0,1,length.out = num.breaks[2])))
         }
-        basis <- list(create.bspline.basis(norder=n.order[1], breaks=breaks[[1]]), 
+        basis <- list(create.bspline.basis(norder=n.order[1], breaks=breaks[[1]]),
                       create.bspline.basis(norder=n.order[2], breaks=breaks[[2]]))
       }
     }
   }
-  structure(list(x=x, basis=basis, n.order=n.order, pen.degree=pen.degree, lambda=lambda, 
-                 breaks=breaks, dim.predictor=d, intercept = intercept, type=type), 
+  structure(list(x=x, basis=basis, n.order=n.order, pen.degree=pen.degree, lambda=lambda,
+                 breaks=breaks, dim.predictor=d, intercept = intercept, type=type),
             class="base")
 }
 
@@ -169,17 +175,17 @@ penalty.mat <- function(object=b){
     if(d == 2){ # lambda1 and lambda2 penalize the integrated squared partial second derivatives wrt x1 and x2, respectively
       K1 <- getbasispenalty(basis[[1]],Lfdobj=pen.degree[1])
       K2 <- getbasispenalty(basis[[2]],Lfdobj=pen.degree[2])
-      
+
       K1 <- kronecker(diag(basis[[2]]$nbasis), K1)
       K2 <- kronecker(K2, diag(basis[[1]]$nbasis))
-      
+
       pm <- lambda[1]*K1 + lambda[2]*K2
     }
   }
   if(object$type=="linear"){
     Z <- design.mat(object)
     pm <- 0*diag(ncol(Z))
-  } 
+  }
   pm
 }
 
@@ -211,25 +217,25 @@ design.mat <- function(object){
     intercept <- object$intercept
     if(intercept){
       Z <- cbind(rep(1, nrow(Z)), Z)
-    } 
+    }
   }
   Z
 }
 
 ar.objective <- function(Y, BX, BA, lambda.nile, beta){
-  
+
   ZX <- design.mat(BX)
   lKX <- penalty.mat(BX)
   ZA <- design.mat(BA)
   lKA <- penalty.mat(BA)
-  
-  # 'hat matrix' for the fit onto A's spline basis. 
+
+  # 'hat matrix' for the fit onto A's spline basis.
   WA <- ZA%*%solve(t(ZA)%*%ZA+lKA, t(ZA))
-  
+
   ols <- t(Y-ZX%*%beta)%*%(Y-ZX%*%beta)
   pen <- t(beta)%*%lKX%*%beta
   iv <- t(Y-ZX%*%beta)%*%t(WA)%*%WA%*%(Y-ZX%*%beta)
-  
+
   if(lambda.nile < Inf){
     ar <- ols + lambda.nile*iv
   } else{
@@ -240,42 +246,42 @@ ar.objective <- function(Y, BX, BA, lambda.nile, beta){
 
 
 ar.fit <- function(Y, BX, BA, lambda.nile, p.min){
-  
+
   n <- length(Y)
   ZX <- design.mat(BX)
   lKX <- penalty.mat(BX)
   ZA <- design.mat(BA)
   lKA <- penalty.mat(BA)
-  
+
   WA <- ZA%*%solve(t(ZA)%*%ZA + lKA, t(ZA))
-  
+
   betaX <- solve(t(ZX)%*%ZX + lKX,t(ZX)%*%Y) # OLS
   if(lambda.nile!=0){
     if(lambda.nile==Inf){ # IV
       betaX <- solve(t(ZX)%*%t(WA)%*%WA%*%ZX + lKX, t(ZX)%*%t(WA)%*%WA%*%Y)
     } else{ # AR
-      betaX <- solve(t(ZX)%*%(diag(n)+lambda.nile*t(WA)%*%WA)%*%ZX+lKX, 
+      betaX <- solve(t(ZX)%*%(diag(n)+lambda.nile*t(WA)%*%WA)%*%ZX+lKX,
                      t(ZX)%*%(diag(n)+lambda.nile*t(WA)%*%WA)%*%Y)
     }
   }
   fitX <- ZX%*%betaX
   resX <- Y - fitX
-  
+
   betaA <- solve(t(ZA)%*%ZA + lKA, t(ZA)%*%resX)
   fitA <- ZA%*%betaA
-  
-  structure(list(coefficients = betaX, residuals = resX, fitted.values = fitX, betaA = betaA, fitA = fitA, Y=Y, BX=BX, BA=BA), 
+
+  structure(list(coefficients = betaX, residuals = resX, fitted.values = fitX, betaA = betaA, fitA = fitA, Y=Y, BX=BX, BA=BA),
             class = "AR")
 }
 
 test.statistic <- function(Y, BX, BA, beta){
-  
+
   ZX <- design.mat(BX)
   ZA <- design.mat(BA)
   pA <- ncol(ZA)
   lambdaA <- BA$lambda
   KA <- penalty.mat(BA) / lambdaA
-  R <- Y - ZX %*% beta 
+  R <- Y - ZX %*% beta
   Rhat <- ar.fit(R, BA, BA, 0, 0)$fitted.values
   s2hat <- var(R-Rhat)
   Tn <- sum(Rhat^2) # as in Chen et al.
@@ -299,22 +305,22 @@ Q <- function(BA, p.min){
 }
 
 binary.search.lambda <- function(Y, BX, BA, p.min, eps = 1e-6){
-  
+
   q <- Q(BA, p.min)
   lmax <- 2
   lmin <- 0
   betaX <- ar.fit(Y, BX, BA, lmax)$coefficients
   t <- test.statistic(Y, BX, BA, betaX)
-  
+
   while(t > q){
     lmin <- lmax
     lmax <- lmax^2
     betaX <- ar.fit(Y, BX, BA, lmax)$coefficients
     t <- test.statistic(Y, BX, BA, betaX)
   }
-  
+
   Delta <- lmax-lmin
-  
+
   while(Delta > eps || Accept == FALSE){
     l <- (lmin+lmax)/2
     betaX <- ar.fit(Y, BX, BA, l)$coefficients
@@ -368,9 +374,9 @@ plot.AR <- function(object=out, x.new, f.true=NULL){
   BA <- object$BA
   betaA <- object$betaA
   dA <- BA$dim.predictor
-  
+
   dfX <- data.frame(X=BX$x, Y=Y, A = A, fitted=object$fitted.values, true=ifelse(rep(is.null(f.true), length(Y)), NA, f.true(BX$x)))
-  
+
   if(1){ # new, experimental
     if(object$BX$type == "pspline"){
       xmin <- min(object$BX$breaks)
@@ -386,45 +392,45 @@ plot.AR <- function(object=out, x.new, f.true=NULL){
     }
     xseq <- seq(xmin, xmax, length.out = 100)
     dfpred <- data.frame(x = xseq, fhat = predict(object, xseq), ftrue = ifelse(rep(is.null(f.true), length(xseq)), NA, f.true(xseq)))
-    pX <- ggplot2::ggplot(dfX, aes(X, Y)) + geom_point(aes(col=A)) + 
-      coord_cartesian(xlim = range(xseq)) + 
-      #geom_line(aes(X,fitted),col="red") + 
-      geom_line(data=dfpred, aes(x,fhat), col="red") + 
+    pX <- ggplot2::ggplot(dfX, aes(X, Y)) + geom_point(aes(col=A)) +
+      coord_cartesian(xlim = range(xseq)) +
+      #geom_line(aes(X,fitted),col="red") +
+      geom_line(data=dfpred, aes(x,fhat), col="red") +
       theme_bw() + ggtitle(paste("OLS objective = ", round(object$ols,2)))
     if(!is.null(f.true)) pX <- pX + geom_line(data=dfpred, aes(x,ftrue), col="darkgreen")
   }
-  
+
   if(0){ # old, works
-    pX <- ggplot2::ggplot(dfX, aes(X, Y)) + geom_point() + 
-      geom_line(aes(X,fitted),col="red") + 
+    pX <- ggplot2::ggplot(dfX, aes(X, Y)) + geom_point() +
+      geom_line(aes(X,fitted),col="red") +
       theme_bw() + ggtitle(paste("OLS objective = ", round(object$ols,2)))
     if(!is.null(f.true)) pX <- pX + geom_line(aes(X,true),col="darkgreen")
   }
-  
+
   if(dA == 1){
     dfA <- data.frame(A = BA$x, residuals = object$residuals, fitted=object$fitA)
-    pA <- ggplot2::ggplot(dfA, aes(A, residuals)) + geom_point() + 
-      geom_line(aes(A,fitted),col="red") + theme_bw() + 
+    pA <- ggplot2::ggplot(dfA, aes(A, residuals)) + geom_point() +
+      geom_line(aes(A,fitted),col="red") + theme_bw() +
       ggtitle(paste("IV objective = ", round(object$iv,2)))
   }
   if(dA == 2){
     A1 <- BA$x[,1]
     A2 <- BA$x[,2]
-    dfA <- expand.grid(A1=seq(min(A1),max(A1),length.out = 100), 
+    dfA <- expand.grid(A1=seq(min(A1),max(A1),length.out = 100),
                        A2=seq(min(A2),max(A2),length.out = 100))
     ZA <- predict(BA, as.matrix(dfA))
     dfA$fitted <- ZA%*%betaA
-    
+
     dA1 <- (sort(unique(dfA$A1))[2]-sort(unique(dfA$A1))[1])/2
     dA2 <- (sort(unique(dfA$A2))[2]-sort(unique(dfA$A2))[1])/2
-    
-    pA <- ggplot(dfA, aes(xmin=A1-dA1,xmax=A1+dA1,ymin=A2-dA2,ymax=A2+dA2, fill=fitted), col="transparent") + 
-      geom_rect() + 
-      scale_fill_gradient2(low="darkblue", high="gold", mid="darkgray") + 
-      theme_bw() + 
+
+    pA <- ggplot(dfA, aes(xmin=A1-dA1,xmax=A1+dA1,ymin=A2-dA2,ymax=A2+dA2, fill=fitted), col="transparent") +
+      geom_rect() +
+      scale_fill_gradient2(low="darkblue", high="gold", mid="darkgray") +
+      theme_bw() +
       ggtitle(paste("IV objective = ", round(object$iv,2)))
   }
-  
+
   gridExtra::grid.arrange(pX, pA, widths = c(1, .8), ncol=2)
 }
 
@@ -432,7 +438,7 @@ plot.AR <- function(object=out, x.new, f.true=NULL){
 
 
 cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
-  
+
   n <- length(Y)
   num.folds <- par.cv$num.folds
   optim <- par.cv$optim
@@ -441,7 +447,7 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
   dX <- BX$dim.predictor
   A <- BA$x
   dA <- BA$dim.predictor
-  
+
   ## Construct folds for CV
   if(num.folds=="leave-one-out"){
     folds <- vector("list", n)
@@ -462,8 +468,8 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
   } else{
     stop("num.folds was specified incorrectly")
   }
-  
-  
+
+
   BX.train <- vector("list", num.folds)
   BX.val <- vector("list", num.folds)
   BA.train <- vector("list", num.folds)
@@ -481,22 +487,22 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
     Y.train[[i]] <- Y[train]
     Y.val[[i]] <- Y[val]
   }
-  
+
   # Initialize upper and lower bound for penalty (see 5.4.1 in Functional Data Analysis)
   ZX <- design.mat(BX)
   BX$lambda <- rep(1,dX)
   KX <- penalty.mat(BX)
   ZXnorm <- sum(diag(t(ZX)%*%ZX))
   KXnorm <- sum(diag(KX))
-  
+
   r <- ZXnorm/KXnorm
   lower.spar <- 0
   upper.spar <- 2
   lower.lambda <- r*256^(3*lower.spar-1)
   upper.lambda <- r*256^(3*upper.spar-1)
-  
+
   cost.function <- function(spar){
-    # here spar is 1-dim (i.e., same penalty for all dimensions). 
+    # here spar is 1-dim (i.e., same penalty for all dimensions).
     # Currently, implementation is unstable if spar higher-dimensional
     lambda <- rep(r*256^(3*spar-1),dX)
     cost <- 0
@@ -512,7 +518,7 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
     }
     cost/num.folds
   }
-  
+
   if(optim=="optimize"){
     solutions.optim <- optimize(cost.function, c(lower.spar, upper.spar))
     spar <- as.numeric(solutions.optim$minimum)
@@ -535,7 +541,7 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
     spar <- spar.vec[index.best.spar]
     lambda <- r*256^(3*spar-1)
   }
-  
+
   # Check whether lambda is attained at boundaries
   if(min(abs(lambda - lower.lambda)) < 10^(-16)){
     warning("There was at least one case in which CV yields a lambda at the lower boundary.")
@@ -543,7 +549,7 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
   if(min(abs(lambda - upper.lambda)) < 10^(-16)){
     warning("There was at least one case in which CV yields a lambda at the upper boundary.")
   }
-  
+
   BX$lambda <- lambda
   BX
 }
