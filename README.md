@@ -15,7 +15,7 @@ Installation
 <!-- ``` r -->
 <!-- install.packages("NILE") -->
 <!-- ``` -->
-And the development version from [GitHub](https://github.com/) with:
+You can install the the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
