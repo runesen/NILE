@@ -1,16 +1,29 @@
-
-# library(fda)
-# library(cvTools)
-# library(ggplot2)
-# library(MASS)
-# library(expm)
-# !!! to move inside the functions
-# theme_set(theme_bw())
-
-
+#' Estimate NILE
 #'
+#' Brief description of the function.
 #'
+#' Detailed description that spans possibly several lines...
+#' You can have lists
+#' \enumerate{
+#' \item ... with some equations \eqn{x^2 + y^2 = 1}...
+#' \item or plain text
+#' \item or reference to arguments \code{X, Y}.
+#' }
 #'
+#' @param Y,X,A,lambda.nile,intercept Numeric vectors. Two vectors with
+#' \code{n} observations.
+#' @param df,x.new,p.min,plot,f.true,par.cv Positive integer.
+#' The number of observations used to
+#' compute ... Set by default to \code{3.14}...
+#' @param par.x,par.a List made of:
+#' \itemize{
+#' \item \code{pen.degree} this is ...
+#' \item \code{n.order} this is ...
+#' \item \code{num.breaks} this is ...
+#' }
+#' @return Numeric --- between 0 and 1.
+#' The causal tail coefficient between \code{v1} and \code{v2}.
+#' @export
 NILE <- function(Y, X, A, lambda.nile,
                  intercept = TRUE,
                  df = 100,
@@ -123,7 +136,9 @@ NILE <- function(Y, X, A, lambda.nile,
 }
 
 
-create.base <- function(x, num.breaks=3, breaks=NULL, n.order=4, pen.degree=2, lambda=NULL, basis=NULL, intercept = TRUE, type = "pspline"){
+create.base <- function(x, num.breaks=3, breaks=NULL, n.order=4,
+                        pen.degree=2, lambda=NULL, basis=NULL,
+                        intercept = TRUE, type = "pspline"){
 
   d <- ifelse(is.vector(x),1,ncol(x))
 
@@ -153,15 +168,18 @@ create.base <- function(x, num.breaks=3, breaks=NULL, n.order=4, pen.degree=2, l
             class="base")
 }
 
-## Evaluates the basis functions in object at data xnew
-predict.base <- function(object=b, xnew, ...){
-  a <- c(list(x = xnew), object[c("basis", "pen.degree", "lambda", "intercept", "type")])
+
+#' @import fda cvTools ggplot2 MASS expm stats
+predict.base <- function(object, xnew, ...){
+  a <- c(list(x = xnew), object[c("basis", "pen.degree", "lambda",
+                                  "intercept", "type")])
   object <- do.call("create.base", a)
   design.mat(object)
 }
 
-## penalty matrix lambda*K
-penalty.mat <- function(object=b){
+
+# penalty matrix lambda*K
+penalty.mat <- function(object){
   if(object$type == "pspline"){
     d <- object$dim.predictor
     basis <- object$basis
@@ -172,7 +190,8 @@ penalty.mat <- function(object=b){
       K <- getbasispenalty(basis)
       pm <- lambda*K
     }
-    if(d == 2){ # lambda1 and lambda2 penalize the integrated squared partial second derivatives wrt x1 and x2, respectively
+    if(d == 2){ # lambda1 and lambda2 penalize the integrated squared partial
+                # second derivatives wrt x1 and x2, respectively
       K1 <- getbasispenalty(basis[[1]],Lfdobj=pen.degree[1])
       K2 <- getbasispenalty(basis[[2]],Lfdobj=pen.degree[2])
 
@@ -189,7 +208,8 @@ penalty.mat <- function(object=b){
   pm
 }
 
-## design matrix (basis functions evaluated at data)
+
+# design matrix (basis functions evaluated at data)
 design.mat <- function(object){
   if(object$type == "pspline"){
     d <- object$dim.predictor
@@ -221,6 +241,7 @@ design.mat <- function(object){
   }
   Z
 }
+
 
 ar.objective <- function(Y, BX, BA, lambda.nile, beta){
 
@@ -270,9 +291,11 @@ ar.fit <- function(Y, BX, BA, lambda.nile, p.min){
   betaA <- solve(t(ZA)%*%ZA + lKA, t(ZA)%*%resX)
   fitA <- ZA%*%betaA
 
-  structure(list(coefficients = betaX, residuals = resX, fitted.values = fitX, betaA = betaA, fitA = fitA, Y=Y, BX=BX, BA=BA),
+  structure(list(coefficients = betaX, residuals = resX, fitted.values = fitX,
+                 betaA = betaA, fitA = fitA, Y=Y, BX=BX, BA=BA),
             class = "AR")
 }
+
 
 test.statistic <- function(Y, BX, BA, beta){
 
@@ -300,9 +323,11 @@ test.statistic <- function(Y, BX, BA, beta){
   (Tn - s2hat*sum(diag(H%^%2))) / (s2hat * sqrt(2 * sum(diag(H%^%4))))
 }
 
+
 Q <- function(BA, p.min){
   qnorm(1-p.min)
 }
+
 
 binary.search.lambda <- function(Y, BX, BA, p.min, eps = 1e-6){
 
@@ -343,8 +368,10 @@ predict.AR <- function(object, xnew, ...){
   BX <- object$BX # fitted base object
   basis <- BX$basis
   x <- BX$x
-  ZX <- getbasismatrix(x, basis, nderiv=0, returnMatrix=FALSE) # spline basis evalutated at data (i.e., design matrix)
-  ZXprime <- getbasismatrix(x, basis, nderiv=1, returnMatrix=FALSE) # derivatives of splines evaluated at data
+  # spline basis evalutated at data (i.e., design matrix)
+  ZX <- getbasismatrix(x, basis, nderiv=0, returnMatrix=FALSE)
+  # derivatives of splines evaluated at data
+  ZXprime <- getbasismatrix(x, basis, nderiv=1, returnMatrix=FALSE)
   beta <- object$coefficients # fitted coefficients
   w.min <- which.min(x)
   w.max <- which.max(x)
@@ -366,7 +393,14 @@ predict.AR <- function(object, xnew, ...){
   out
 }
 
-plot.AR <- function(object=out, x.new, f.true=NULL){
+
+plot.AR <- function(object, x.new, f.true=NULL){
+  X <- NULL
+  x <- NULL
+  fhat <- NULL
+  ftrue <- NULL
+  true <- NULL
+
   Y <- object$Y
   A <- object$A
   BX <- object$BX
@@ -375,7 +409,9 @@ plot.AR <- function(object=out, x.new, f.true=NULL){
   betaA <- object$betaA
   dA <- BA$dim.predictor
 
-  dfX <- data.frame(X=BX$x, Y=Y, A = A, fitted=object$fitted.values, true=ifelse(rep(is.null(f.true), length(Y)), NA, f.true(BX$x)))
+  dfX <- data.frame(X=BX$x, Y=Y, A = A, fitted=object$fitted.values,
+                    true=ifelse(rep(is.null(f.true), length(Y)), NA,
+                                f.true(BX$x)))
 
   if(1){ # new, experimental
     if(object$BX$type == "pspline"){
@@ -391,13 +427,16 @@ plot.AR <- function(object=out, x.new, f.true=NULL){
       xmax <- max(xmax, max(x.new))
     }
     xseq <- seq(xmin, xmax, length.out = 100)
-    dfpred <- data.frame(x = xseq, fhat = predict(object, xseq), ftrue = ifelse(rep(is.null(f.true), length(xseq)), NA, f.true(xseq)))
+    dfpred <- data.frame(x = xseq, fhat = predict(object, xseq),
+                         ftrue = ifelse(rep(is.null(f.true), length(xseq)), NA,
+                                        f.true(xseq)))
     pX <- ggplot2::ggplot(dfX, aes(X, Y)) + geom_point(aes(col=A)) +
       coord_cartesian(xlim = range(xseq)) +
       #geom_line(aes(X,fitted),col="red") +
       geom_line(data=dfpred, aes(x,fhat), col="red") +
       theme_bw() + ggtitle(paste("OLS objective = ", round(object$ols,2)))
-    if(!is.null(f.true)) pX <- pX + geom_line(data=dfpred, aes(x,ftrue), col="darkgreen")
+    if(!is.null(f.true)) pX <- pX +
+      geom_line(data=dfpred, aes(x,ftrue), col="darkgreen")
   }
 
   if(0){ # old, works
@@ -408,7 +447,9 @@ plot.AR <- function(object=out, x.new, f.true=NULL){
   }
 
   if(dA == 1){
-    dfA <- data.frame(A = BA$x, residuals = object$residuals, fitted=object$fitA)
+    dfA <- data.frame(A = BA$x,
+                      residuals = object$residuals,
+                      fitted=object$fitA)
     pA <- ggplot2::ggplot(dfA, aes(A, residuals)) + geom_point() +
       geom_line(aes(A,fitted),col="red") + theme_bw() +
       ggtitle(paste("IV objective = ", round(object$iv,2)))
@@ -424,7 +465,8 @@ plot.AR <- function(object=out, x.new, f.true=NULL){
     dA1 <- (sort(unique(dfA$A1))[2]-sort(unique(dfA$A1))[1])/2
     dA2 <- (sort(unique(dfA$A2))[2]-sort(unique(dfA$A2))[1])/2
 
-    pA <- ggplot(dfA, aes(xmin=A1-dA1,xmax=A1+dA1,ymin=A2-dA2,ymax=A2+dA2, fill=fitted), col="transparent") +
+    pA <- ggplot(dfA, aes(xmin=A1-dA1,xmax=A1+dA1,ymin=A2-dA2,ymax=A2+dA2,
+                          fill=fitted), col="transparent") +
       geom_rect() +
       scale_fill_gradient2(low="darkblue", high="gold", mid="darkgray") +
       theme_bw() +
@@ -433,8 +475,6 @@ plot.AR <- function(object=out, x.new, f.true=NULL){
 
   gridExtra::grid.arrange(pX, pA, widths = c(1, .8), ncol=2)
 }
-
-
 
 
 cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
@@ -480,15 +520,22 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
     train <- (1:n)[-folds[[i]]]
     val <- (1:n)[folds[[i]]]
     # base objects, each holding data corresponding to their respective CV fold
-    BX.train[[i]] <- create.base(x=matrix(X,ncol=dX)[train,], basis=BX$basis, intercept=BX$intercept, type=BX$type)
-    BX.val[[i]] <- create.base(x=matrix(X,ncol=dX)[val,], basis=BX$basis, intercept=BX$intercept, type=BX$type)
-    BA.train[[i]] <- create.base(x=matrix(A,ncol=dA)[train,], basis=BA$basis, lambda=BA$lambda, intercept=BA$intercept, type=BA$type)
-    BA.val[[i]] <- create.base(x=matrix(A,ncol=dA)[val,], basis=BA$basis, lambda = BA$lambda, intercept=BA$intercept, type=BA$type)
+    BX.train[[i]] <- create.base(x=matrix(X,ncol=dX)[train,], basis=BX$basis,
+                                 intercept=BX$intercept, type=BX$type)
+    BX.val[[i]] <- create.base(x=matrix(X,ncol=dX)[val,], basis=BX$basis,
+                               intercept=BX$intercept, type=BX$type)
+    BA.train[[i]] <- create.base(x=matrix(A,ncol=dA)[train,], basis=BA$basis,
+                                 lambda=BA$lambda, intercept=BA$intercept,
+                                 type=BA$type)
+    BA.val[[i]] <- create.base(x=matrix(A,ncol=dA)[val,], basis=BA$basis,
+                               lambda = BA$lambda, intercept=BA$intercept,
+                               type=BA$type)
     Y.train[[i]] <- Y[train]
     Y.val[[i]] <- Y[val]
   }
 
-  # Initialize upper and lower bound for penalty (see 5.4.1 in Functional Data Analysis)
+  # Initialize upper and lower bound for penalty (see 5.4.1 in Functional
+  # Data Analysis)
   ZX <- design.mat(BX)
   BX$lambda <- rep(1,dX)
   KX <- penalty.mat(BX)
@@ -511,9 +558,11 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
       BX.train[[i]]$lambda <- lambda
       BX.val[[i]]$lambda <- lambda
       # fit on training da
-      betahat <- ar.fit(Y=Y.train[[i]], BX=BX.train[[i]], BA=BA.train[[i]], lambda.nile)$coefficients
+      betahat <- ar.fit(Y=Y.train[[i]], BX=BX.train[[i]], BA=BA.train[[i]],
+                        lambda.nile)$coefficients
       # AR-objective evaluated on test data
-      cost.ar <- ar.objective(Y.val[[i]], BX.val[[i]], BA.val[[i]], lambda.nile, betahat)$ar
+      cost.ar <- ar.objective(Y.val[[i]], BX.val[[i]], BA.val[[i]],
+                              lambda.nile, betahat)$ar
       cost <- cost + cost.ar
     }
     cost/num.folds
@@ -544,10 +593,12 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
 
   # Check whether lambda is attained at boundaries
   if(min(abs(lambda - lower.lambda)) < 10^(-16)){
-    warning("There was at least one case in which CV yields a lambda at the lower boundary.")
+    warning(paste("There was at least one case in which CV yields",
+                  "a lambda at the lower boundary."))
   }
   if(min(abs(lambda - upper.lambda)) < 10^(-16)){
-    warning("There was at least one case in which CV yields a lambda at the upper boundary.")
+    warning(paste("There was at least one case in which CV yields",
+                  "a lambda at the upper boundary."))
   }
 
   BX$lambda <- lambda

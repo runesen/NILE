@@ -5,8 +5,7 @@ Authors@R:
     person(given = "Rune",
            family = "Christiansen",
            role = c("aut", "cre"),
-           email = "krunechristiansen@math.ku.dk",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "krunechristiansen@math.ku.dk")
 Description: What the package does (one paragraph).
 License: GPL-3
 Encoding: UTF-8
@@ -19,4 +18,5 @@ Imports:
     cvTools,
     ggplot2,
     expm,
-    gridExtra
+    gridExtra,
+    stats
