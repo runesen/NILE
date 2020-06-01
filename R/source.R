@@ -10,7 +10,7 @@
 #' \item or reference to arguments \code{X, Y}.
 #' }
 #'
-#' @param Y,X,A,lambda.nile,intercept Numeric vectors. Two vectors with
+#' @param Y,X,A,lambda.star,intercept Numeric vectors. Two vectors with
 #' \code{n} observations.
 #' @param df,x.new,p.min,plot,f.true,par.cv Positive integer.
 #' The number of observations used to
@@ -24,7 +24,7 @@
 #' @return Numeric --- between 0 and 1.
 #' The causal tail coefficient between \code{v1} and \code{v2}.
 #' @export
-NILE <- function(Y, X, A, lambda.nile,
+NILE <- function(Y, X, A, lambda.star,
                  intercept = TRUE,
                  df = 100,
                  x.new = NULL,
@@ -79,7 +79,7 @@ NILE <- function(Y, X, A, lambda.nile,
   }
 
   # in all other cases, the OLS obective will force small residuals, so intercept in regression on A not needed
-  intercept.A <- lambda.nile == Inf
+  intercept.A <- lambda.star == Inf
 
   # create basis object for A
   BA <- create.base(x=A, num.breaks=par.a$num.breaks, breaks=par.a$breaks,
@@ -90,7 +90,7 @@ NILE <- function(Y, X, A, lambda.nile,
     # R <- lm(Y~X)$residuals
     R <- Y-mean(Y)
     BA$lambda <- pi # arbitrary value
-    BA <- cv.lambda(Y=R, BX=BA, BA=BA, lambda.nile=0, par.cv) # minimizes out-of-sample AR objective, here with lambda.nile=0, i.e., OLS error
+    BA <- cv.lambda(Y=R, BX=BA, BA=BA, lambda.star=0, par.cv) # minimizes out-of-sample AR objective, here with lambda.star=0, i.e., OLS error
     print(paste("lambda.cv.a = ", BA$lambda))
   }
 
@@ -98,35 +98,35 @@ NILE <- function(Y, X, A, lambda.nile,
   BX <- create.base(x=X, num.breaks=par.x$num.breaks, breaks=par.x$breaks,
                     n.order=par.x$n.order, pen.degree=par.x$pen.degree, lambda=par.x$lambda,
                     intercept = intercept, type = "pspline")
-  if(is.numeric(lambda.nile)){
+  if(is.numeric(lambda.star)){
     if(is.null(BX$lambda)){
       # choose lambdaX to minimize out-of-sample AR-objective
-      BX <- cv.lambda(Y, BX, BA, lambda.nile, par.cv)
+      BX <- cv.lambda(Y, BX, BA, lambda.star, par.cv)
       print(paste("lambda.cv.x = ", BX$lambda))
     }
   }
 
-  if(lambda.nile == "test"){
+  if(lambda.star == "test"){
     if(is.null(BX$lambda)){
       # first choose lambdaX to minimize MSPE
-      BX <- cv.lambda(Y, BX, BA, lambda.nile=0, par.cv)
+      BX <- cv.lambda(Y, BX, BA, lambda.star=0, par.cv)
       print(paste("lambda.cv.x = ", BX$lambda))
-      lambda.nile <- binary.search.lambda(Y, BX, BA, p.min)
-      print(paste("lambda.nile.p.uncorr = ", lambda.nile))
+      lambda.star <- binary.search.lambda(Y, BX, BA, p.min)
+      print(paste("lambda.star.p.uncorr = ", lambda.star))
     }
-    BX$lambda <- (1+lambda.nile)*BX$lambda
+    BX$lambda <- (1+lambda.star)*BX$lambda
   }
 
   # fit AR model
-  out <- ar.fit(Y, BX, BA, lambda.nile, p.min)
-  obj <- ar.objective(Y, BX, BA, lambda.nile, out$coefficients)
+  out <- ar.fit(Y, BX, BA, lambda.star, p.min)
+  obj <- ar.objective(Y, BX, BA, lambda.star, out$coefficients)
   out$ols <- obj$ols
   out$iv <- obj$iv
   out$ar <- obj$ar
   out$intercept <- intercept
   out$lambdaA <- BA$lambda
   out$lambdaX <- BX$lambda
-  out$lambda.nile <- lambda.nile
+  out$lambda.star <- lambda.star
   out$A <- A
   if(!is.null(x.new)){
     out$pred <- predict(out, x.new)
@@ -243,7 +243,7 @@ design.mat <- function(object){
 }
 
 
-ar.objective <- function(Y, BX, BA, lambda.nile, beta){
+ar.objective <- function(Y, BX, BA, lambda.star, beta){
 
   ZX <- design.mat(BX)
   lKX <- penalty.mat(BX)
@@ -257,8 +257,8 @@ ar.objective <- function(Y, BX, BA, lambda.nile, beta){
   pen <- t(beta)%*%lKX%*%beta
   iv <- t(Y-ZX%*%beta)%*%t(WA)%*%WA%*%(Y-ZX%*%beta)
 
-  if(lambda.nile < Inf){
-    ar <- ols + lambda.nile*iv
+  if(lambda.star < Inf){
+    ar <- ols + lambda.star*iv
   } else{
     ar <- iv
   }
@@ -266,7 +266,7 @@ ar.objective <- function(Y, BX, BA, lambda.nile, beta){
 }
 
 
-ar.fit <- function(Y, BX, BA, lambda.nile, p.min){
+ar.fit <- function(Y, BX, BA, lambda.star, p.min){
 
   n <- length(Y)
   ZX <- design.mat(BX)
@@ -277,12 +277,12 @@ ar.fit <- function(Y, BX, BA, lambda.nile, p.min){
   WA <- ZA%*%solve(t(ZA)%*%ZA + lKA, t(ZA))
 
   betaX <- solve(t(ZX)%*%ZX + lKX,t(ZX)%*%Y) # OLS
-  if(lambda.nile!=0){
-    if(lambda.nile==Inf){ # IV
+  if(lambda.star!=0){
+    if(lambda.star==Inf){ # IV
       betaX <- solve(t(ZX)%*%t(WA)%*%WA%*%ZX + lKX, t(ZX)%*%t(WA)%*%WA%*%Y)
     } else{ # AR
-      betaX <- solve(t(ZX)%*%(diag(n)+lambda.nile*t(WA)%*%WA)%*%ZX+lKX,
-                     t(ZX)%*%(diag(n)+lambda.nile*t(WA)%*%WA)%*%Y)
+      betaX <- solve(t(ZX)%*%(diag(n)+lambda.star*t(WA)%*%WA)%*%ZX+lKX,
+                     t(ZX)%*%(diag(n)+lambda.star*t(WA)%*%WA)%*%Y)
     }
   }
   fitX <- ZX%*%betaX
@@ -477,7 +477,7 @@ plot.AR <- function(object, x.new, f.true=NULL){
 }
 
 
-cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
+cv.lambda <- function(Y, BX, BA, lambda.star, par.cv){
 
   n <- length(Y)
   num.folds <- par.cv$num.folds
@@ -559,10 +559,10 @@ cv.lambda <- function(Y, BX, BA, lambda.nile, par.cv){
       BX.val[[i]]$lambda <- lambda
       # fit on training da
       betahat <- ar.fit(Y=Y.train[[i]], BX=BX.train[[i]], BA=BA.train[[i]],
-                        lambda.nile)$coefficients
+                        lambda.star)$coefficients
       # AR-objective evaluated on test data
       cost.ar <- ar.objective(Y.val[[i]], BX.val[[i]], BA.val[[i]],
-                              lambda.nile, betahat)$ar
+                              lambda.star, betahat)$ar
       cost <- cost + cost.ar
     }
     cost/num.folds
