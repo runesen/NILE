@@ -29,7 +29,7 @@ lines(x.new,f.new,col="blue",lwd=3)
 fit <- NILE(Y, # response
             X, # predictors (so far, only 1-dim supported)
             A, # anchors (1 or 2-dim, although 2-dim is experimental so far)
-            lambda.nile = "test", # (0 = OLS, Inf = IV, (0,Inf) =
+            lambda.star = "test", # (0 = OLS, Inf = IV, (0,Inf) =
             # nonlinear anchor regression, "test" = NILE)
             intercept = TRUE,
             df = 50, # number of splines used for X -> Y
