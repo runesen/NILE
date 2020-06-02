@@ -1,28 +1,60 @@
-#' Estimate NILE
+#' Method for estimating a nonlinear causal relationship X- > Y
+#' that is assumed to linearly extrapolate outside of the support
+#' of X
 #'
-#' Brief description of the function.
 #'
-#' Detailed description that spans possibly several lines...
-#' You can have lists
+#'
+#' @author Rune Christiansen \email{krunechristiansen@@math.ku.dk}
+#'
 #' \enumerate{
 #' \item ... with some equations \eqn{x^2 + y^2 = 1}...
 #' \item or plain text
 #' \item or reference to arguments \code{X, Y}.
 #' }
 #'
-#' @param Y,X,A,lambda.star,intercept Numeric vectors. Two vectors with
-#' \code{n} observations.
-#' @param df,x.new,p.min,plot,f.true,par.cv Positive integer.
-#' The number of observations used to
-#' compute ... Set by default to \code{3.14}...
-#' @param par.x,par.a List made of:
+#' @param Y A numeric vector with observations from the target variable
+#' @param X A numeric vector with observations from the predictor variable
+#' @param A A numeric vector with observations from the exogenous variable
+#' @param lambda.star weight which determines the relative importance of
+#' the OLS loss and the two-stage-least-squares (TSLS) loss in the estimation
+#' procedure. Can be either a positive numeric (with lambda.star = 0 corresponding to the OLS),
+#' Inf (corresponding to the TSLS), or "test" (corresponding to a data-driven
+#' choice of lambda.star). If lambda.star = "test" (the default), then lambda.star
+#' is chosen such that teh resulting estimator yields prediction residuals
+#' which "just" pass a statistical test for vanishing product moment with
+#' all nonlinear basis-transformations of A.
+#' @param df
+#' @param intercept indicates whether an intercept should be included into
+#' the regression model for
+#' @param x.new
+#' @param p.min A numeric vector with observations from the target variable
+#' @param plot A numeric vector with observations from the target variable
+#' @param f.true A numeric vector with observations from the target variable
+#' @param par.x A numeric vector with observations from the target variable
+#' \itemize{
+#' \item \code{breaks} this is ...
+#' \item \code{num.breaks} this is ...
+#' \item \code{n.order} this is ...
+#' \item \code{pen.degree} this is ...
+#' }
+#' @param par.a A numeric vector with observations from the target variable
+#' \itemize{
+#' \item \code{breaks} this is ...
+#' \item \code{num.breaks} this is ...
+#' \item \code{n.order} this is ...
+#' \item \code{pen.degree} this is ...
+#' }
+#' @param par.cv A numeric vector with observations from the target variable
 #' \itemize{
 #' \item \code{pen.degree} this is ...
 #' \item \code{n.order} this is ...
 #' \item \code{num.breaks} this is ...
 #' }
-#' @return Numeric --- between 0 and 1.
-#' The causal tail coefficient between \code{v1} and \code{v2}.
+#' @return TODO
+#'
+#' @examples TODO
+#'
+#' @import TODO
 #' @export
 NILE <- function(Y, X, A, lambda.star,
                  intercept = TRUE,
