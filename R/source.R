@@ -56,10 +56,14 @@
 #'
 #' @import TODO
 #' @export
-NILE <- function(Y, X, A, lambda.star,
+NILE <- function(Y, X, A,
+                 lambda.star = "test",
                  intercept = TRUE,
                  df = 100,
                  x.new = NULL,
+                 test.statistic = NULL,
+                 quantile.function = NULL,
+                 test = "penalized",
                  p.min = 0.05,
                  plot = TRUE,
                  f.true = NULL,
@@ -77,6 +81,9 @@ NILE <- function(Y, X, A, lambda.star,
   }
   if(!exists("df")){
     df <- 100
+  }
+  if(!exists("test")){
+    test <- "penalized"
   }
   if(!exists("p.min")){
     p.min <- .05
@@ -108,6 +115,17 @@ NILE <- function(Y, X, A, lambda.star,
   }
   if(!exists("n.grid",par.cv)){
     par.cv$n.grid <- 20
+  }
+
+  if(is.null(test.statistic) | is.null(quantile.function)){
+    if(test == "penalized"){
+      test.statistic <- test.statistic.penalized
+      quantile.function <- quantile.function.penalized
+    }
+    if(test == "tsls.over.ols"){
+      test.statistic <- test.statistic.tsls.over.ols
+      quantile.function <- quantile.function.tsls.over.ols
+    }
   }
 
   # in all other cases, the OLS obective will force small residuals, so intercept in regression on A not needed
@@ -143,7 +161,7 @@ NILE <- function(Y, X, A, lambda.star,
       # first choose lambdaX to minimize MSPE
       BX <- cv.lambda(Y, BX, BA, lambda.star=0, par.cv)
       print(paste("lambda.cv.x = ", BX$lambda))
-      lambda.star <- binary.search.lambda(Y, BX, BA, p.min)
+      lambda.star <- binary.search.lambda(Y, BX, BA, p.min, test.statistic, quantile.function)
       print(paste("lambda.star.p.uncorr = ", lambda.star))
     }
     BX$lambda <- (1+lambda.star)*BX$lambda
@@ -329,7 +347,7 @@ ar.fit <- function(Y, BX, BA, lambda.star, p.min){
 }
 
 
-test.statistic <- function(Y, BX, BA, beta){
+test.statistic.penalized <- function(Y, BX, BA, beta){
 
   ZX <- design.mat(BX)
   ZA <- design.mat(BA)
@@ -356,14 +374,37 @@ test.statistic <- function(Y, BX, BA, beta){
 }
 
 
-Q <- function(BA, p.min){
+quantile.function.penalized <- function(BA, p.min){
   qnorm(1-p.min)
 }
 
+test.statistic.tsls.over.ols <- function(Y, BX, BA, beta){
 
-binary.search.lambda <- function(Y, BX, BA, p.min, eps = 1e-6){
+  ZX <- design.mat(BX)
+  lKX <- penalty.mat(BX)
+  ZA <- design.mat(BA)
+  lKA <- penalty.mat(BA)
+  n <- nrow(ZX)
 
-  q <- Q(BA, p.min)
+  # 'hat matrix' for the fit onto A's spline basis.
+  WA <- ZA%*%solve(t(ZA)%*%ZA+lKA, t(ZA))
+  ols <- t(Y-ZX%*%beta)%*%(Y-ZX%*%beta)
+  iv <- t(Y-ZX%*%beta)%*%t(WA)%*%WA%*%(Y-ZX%*%beta)
+
+  n * iv / ols
+}
+
+quantile.function.tsls.over.ols <- function(BA, p.min){
+  ZA <- design.mat(BA)
+  dA <- ncol(ZA)
+  qchisq(1-p.min,df=dA, ncp=0,lower.tail = TRUE,log.p = FALSE)
+}
+
+
+
+binary.search.lambda <- function(Y, BX, BA, p.min, test.statistic, quantile.function, eps = 1e-6){
+
+  q <- quantile.function(BA, p.min)
   lmax <- 2
   lmin <- 0
   betaX <- ar.fit(Y, BX, BA, lmax)$coefficients

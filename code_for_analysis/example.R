@@ -1,3 +1,5 @@
+devtools::install_github("runesen/NILE")
+library(NILE)
 ## The NILE estimator
 # true (unknown) functional relationship X -> Y
 # (linearly extrapolating beyond "extrap")
@@ -31,6 +33,7 @@ fit <- NILE(Y, # response
             A, # anchors (1 or 2-dim, although 2-dim is experimental so far)
             lambda.star = "test", # (0 = OLS, Inf = IV, (0,Inf) =
             # nonlinear anchor regression, "test" = NILE)
+            test = "tsls.over.ols",
             intercept = TRUE,
             df = 50, # number of splines used for X -> Y
             p.min = 0.05, # level at which test for lambda is performed
