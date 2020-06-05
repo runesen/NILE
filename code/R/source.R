@@ -1,47 +1,36 @@
 #' Method for estimating a nonlinear causal relationship X- > Y
 #' that is assumed to linearly extrapolate outside of the support
-#' of X
+#' of X.
 #'
 #'
 #'
 #' @author Rune Christiansen \email{krunechristiansen@@math.ku.dk}
 #'
-#' \enumerate{
-#' \item ... with some equations \eqn{x^2 + y^2 = 1}...
-#' \item or plain text
-#' \item or reference to arguments \code{X, Y}.
-#' }
 #'
 #' @param Y A numeric vector with observations from the target variable
 #' @param X A numeric vector with observations from the predictor variable
 #' @param A A numeric vector with observations from the exogenous variable
-#' @param lambda.star weight which determines the relative importance of
-#' the OLS loss and the two-stage-least-squares (TSLS) loss in the estimation
-#' procedure. Can be either a positive numeric (with lambda.star = 0 corresponding to the OLS),
-#' Inf (corresponding to the TSLS), or "test" (corresponding to a data-driven
-#' choice of lambda.star). If lambda.star = "test" (the default), then lambda.star
-#' is chosen such that teh resulting estimator yields prediction residuals
-#' which "just" pass a statistical test for vanishing product moment with
-#' all nonlinear basis-transformations of A. 
-#' @param df positive integer, indicating the number of basis splines used 
-#' to model the nonlinear function X -> Y
-#' @param intercept logical, indicating whether an intercept should be included into
+#' @param lambda.star either a positive numeric, Inf or "test"; weight which
+#' determines the relative importance of the OLS loss and the TSLS loss,
+#' see details.
+#' @param intercept logical; indicating whether an intercept should be included into
 #' the regression model
-#' @param x.new numeric vector containing the x-values at which predictions 
-#' are desried
-#' @param p.min numeric between 0 and 1, giving the significance level at 
+#' @param df positive integer; number of basis splines used
+#' to model the nonlinear function X -> Y
+#' @param x.new numeric; x-values at which predictions are desried
+#' @param p.min numeric between 0 and 1; the significance level at
 #' which the test which determines lambda.star should be tested.
-#' @param plot logical, for diagnostic plots
-#' @param f.true real-valued function of one variable. If the groundtruth is known,
+#' @param plot logical; diagnostic plots
+#' @param f.true real-valued function of one variable; If the groundtruth is known,
 #' it can be suplied and will be included in diagnostic plots.
 #' @param par.x a list of different parameters determining the B-spline regression
 #' of Y onto X
 #' \itemize{
-#' \item \code{breaks} numeric vector of knots at which B-spline is placed
+#' \item \code{breaks} numeric vector; knots at which B-spline is placed
 #' \item \code{num.breaks} positive interger; number of knots used (ignored if breaks is supplied)
-#' \item \code{n.order} positive integer; order of B-spline basis (default is 4, which corresponds 
+#' \item \code{n.order} positive integer; order of B-spline basis (default is 4, which corresponds
 #' to cubic splines)
-#' \item \code{pen.degree} positive integer; 1 corresponds to a penalty on the first, 
+#' \item \code{pen.degree} positive integer; 1 corresponds to a penalty on the first,
 #' and 2 (default) corresponds to a penalty on the second order derivative.
 #' }
 #' @param par.a a list of different parameters determining the B-spline regression
@@ -54,15 +43,63 @@
 #' }
 #' @param par.cv A list with parameters for the cross-validation procedure.
 #' \itemize{
-#' \item \code{num.folds} either "leave-one-out" or positive integer giving the 
-#' number of CV folds (default = 10)
-#' \item \code{optim} one of "optimize" (default) or "grid.search"; indicating the 
-#' optimization method used for cross-validation.
+#' \item \code{num.folds} either "leave-one-out" or positive integer; number of CV folds (default = 10)
+#' \item \code{optim} one of "optimize" (default) or "grid.search"; optimization method used for cross-validation.
 #' \item \code{n.grid} positive integer; number of grid points used in grid search
 #' }
-#' @return TODO
 #'
-#' @examples 
+#' @details The NILE estimator can be used to learn a nonlinear causal influence
+#' of a real-valued predictor X on a real-valued response variable Y. It exploits
+#' an instrumental variable setting; it assumes that the variable A is a valid instrument.
+#' The estimator uses B-splines to estimate the nonlinear relationship. It further
+#' assumes that the causal function extrapolates lienarly outside of the emirical support
+#' of X, and can therefore be used to obtain causal predictions (that is, predicted
+#' values for Y under confounding-removing interventions on X) even for values of
+#' X which lie outside the training support.
+#'
+#' On a more technical side, the NILE estimator proceeds as follows. First, two B-splines
+#' B = (B_1,...,B_df) and C = (C_1, ..., C_df) are constructed, which span the values
+#' of X and A, respectively. These give rise to the loss functions OLS(theta), which
+#' corresponds to the MSE for the prediction residuals Y - theta^T B, and TSLS(theta),
+#' which are the fitted values of the spline-regression of the residuals Y - theta^T B
+#' onto the spline basis C. The NILE estimator the estimates theta by minimizing the
+#' objective function
+#' OLS(theta) + lambda.star*TSLS(theta) + PEN(theta),
+#' where PEN(theta) is a quadratic penalty term which enforces smoothness.
+#'
+#' The parameter lambda.star is chosen as the largest positive value for which the
+#' corresponding solution yields prediction residuals which pass a test for vanishing
+#' product moment with all basis functions C_1(A), ... C_df(A).
+#'
+#'
+#' @return An object of class AR, containing the following elements
+#' \itemize{
+#' \item \code{coefficients} estimated splines coefficients for the relationship X -> Y
+#' \item \code{residuals} prediction residuals
+#' \item \code{fitted.values} fitted values
+#' \item \code{betaA} estimated spline coefficients for the regression of the prediction
+#' residuals onto the variable A
+#' \item \code{fitA} fitted values for the regression of the prediction
+#' residuals onto the variable A
+#' \item \code{Y} the response variable
+#' \item \code{BX} basis object holding all relevant information about the B-spline
+#' basis used for the regression X -> Y
+#' \item \code{BA} basis object holding all relevant information about the B-spline
+#' basis used for the regression of the residuals onto A
+#' \item \code{ols} OLS loss at the estimated parameters
+#' \item \code{iv} TSLS loss at the estimated parameters
+#' \item \code{ar} NILE loss at the estimated parameters, that is, OLS + lambda.star*TSLS
+#' \item \code{intercept} was an intercept supplied?
+#' \item \code{lambdaX} penalty parameter used for the spline regression X -> Y
+#' \item \code{lambdaA} penalty parameter used for the regression of residuals onto A
+#' \item \code{lambda.star} the (estimated) value for lambda.star
+#' \item \code{pred} predicted values at the supplied vector x.new
+#' }
+#'
+#' @references (include arxiv link when done)
+#'
+#'
+#' @examples
 #'    n.splines.true <- 4
 #'    fX <- function(x, extrap, beta){
 #'      bx <- splines::ns(x, knots = seq(from=extrap[1], to=extrap[2],
@@ -71,7 +108,7 @@
 #'                        Boundary.knots = extrap)
 #'      bx%*%beta
 #'    }
-#'    
+#'
 #'    # data generating model
 #'    n <- 200
 #'    set.seed(2)
@@ -79,14 +116,14 @@
 #'    alphaA <- alphaEps <- alphaH <- 1/sqrt(3)
 #'    A <- runif(n,-1,1)
 #'    H <- runif(n,-1,1)
-#'    X <- alphaA*A + alphaH*H + alphaEps*runif(n,-1,1)
-#'    Y <- fX(x=X,extrap=c(-.7,.7), beta=beta0) + .3*H + .2*runif(n,-1,1)
-#'    
+#'    X <- alphaA * A + alphaH * H + alphaEps*runif(n,-1,1)
+#'    Y <- fX(x=X,extrap=c(-.7,.7), beta=beta0) + .3 * H + .2 * runif(n,-1,1)
+#'
 #'    x.new <- seq(-2,2,length.out=100)
 #'    f.new <- fX(x=x.new,extrap=c(-.7,.7), beta=beta0)
 #'    plot(X,Y, pch=20)
 #'    lines(x.new,f.new,col="blue",lwd=3)
-#'    
+#'
 #'    ## FIT!
 #'    fit <- NILE(Y, # response
 #'                X, # predictors (so far, only 1-dim supported)
@@ -128,8 +165,6 @@ NILE <- function(Y, X, A,
                  intercept = TRUE,
                  df = 100,
                  x.new = NULL,
-                 test.statistic = NULL,
-                 quantile.function = NULL,
                  test = "penalized",
                  p.min = 0.05,
                  plot = TRUE,
@@ -184,15 +219,13 @@ NILE <- function(Y, X, A,
     par.cv$n.grid <- 20
   }
 
-  if(is.null(test.statistic) | is.null(quantile.function)){
-    if(test == "penalized"){
-      test.statistic <- test.statistic.penalized
-      quantile.function <- quantile.function.penalized
-    }
-    if(test == "tsls.over.ols"){
-      test.statistic <- test.statistic.tsls.over.ols
-      quantile.function <- quantile.function.tsls.over.ols
-    }
+  if(test == "penalized"){
+    test.statistic <- test.statistic.penalized
+    quantile.function <- quantile.function.penalized
+  }
+  if(test == "tsls.over.ols"){
+    test.statistic <- test.statistic.tsls.over.ols
+    quantile.function <- quantile.function.tsls.over.ols
   }
 
   # in all other cases, the OLS obective will force small residuals, so intercept in regression on A not needed
