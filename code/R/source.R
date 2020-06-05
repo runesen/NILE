@@ -22,39 +22,106 @@
 #' choice of lambda.star). If lambda.star = "test" (the default), then lambda.star
 #' is chosen such that teh resulting estimator yields prediction residuals
 #' which "just" pass a statistical test for vanishing product moment with
-#' all nonlinear basis-transformations of A.
-#' @param df
-#' @param intercept indicates whether an intercept should be included into
-#' the regression model for
-#' @param x.new
-#' @param p.min A numeric vector with observations from the target variable
-#' @param plot A numeric vector with observations from the target variable
-#' @param f.true A numeric vector with observations from the target variable
-#' @param par.x A numeric vector with observations from the target variable
+#' all nonlinear basis-transformations of A. 
+#' @param df positive integer, indicating the number of basis splines used 
+#' to model the nonlinear function X -> Y
+#' @param intercept logical, indicating whether an intercept should be included into
+#' the regression model
+#' @param x.new numeric vector containing the x-values at which predictions 
+#' are desried
+#' @param p.min numeric between 0 and 1, giving the significance level at 
+#' which the test which determines lambda.star should be tested.
+#' @param plot logical, for diagnostic plots
+#' @param f.true real-valued function of one variable. If the groundtruth is known,
+#' it can be suplied and will be included in diagnostic plots.
+#' @param par.x a list of different parameters determining the B-spline regression
+#' of Y onto X
 #' \itemize{
-#' \item \code{breaks} this is ...
-#' \item \code{num.breaks} this is ...
-#' \item \code{n.order} this is ...
-#' \item \code{pen.degree} this is ...
+#' \item \code{breaks} numeric vector of knots at which B-spline is placed
+#' \item \code{num.breaks} positive interger; number of knots used (ignored if breaks is supplied)
+#' \item \code{n.order} positive integer; order of B-spline basis (default is 4, which corresponds 
+#' to cubic splines)
+#' \item \code{pen.degree} positive integer; 1 corresponds to a penalty on the first, 
+#' and 2 (default) corresponds to a penalty on the second order derivative.
 #' }
-#' @param par.a A numeric vector with observations from the target variable
+#' @param par.a a list of different parameters determining the B-spline regression
+#' of the residuals Y - B(X)*beta onto the residuals A-
 #' \itemize{
-#' \item \code{breaks} this is ...
-#' \item \code{num.breaks} this is ...
-#' \item \code{n.order} this is ...
-#' \item \code{pen.degree} this is ...
+#' \item \code{breaks} same as above
+#' \item \code{num.breaks} same as above
+#' \item \code{n.order} same as above
+#' \item \code{pen.degree} same as above
 #' }
-#' @param par.cv A numeric vector with observations from the target variable
+#' @param par.cv A list with parameters for the cross-validation procedure.
 #' \itemize{
-#' \item \code{pen.degree} this is ...
-#' \item \code{n.order} this is ...
-#' \item \code{num.breaks} this is ...
+#' \item \code{num.folds} either "leave-one-out" or positive integer giving the 
+#' number of CV folds (default = 10)
+#' \item \code{optim} one of "optimize" (default) or "grid.search"; indicating the 
+#' optimization method used for cross-validation.
+#' \item \code{n.grid} positive integer; number of grid points used in grid search
 #' }
 #' @return TODO
 #'
-#' @examples TODO
+#' @examples 
+#'    n.splines.true <- 4
+#'    fX <- function(x, extrap, beta){
+#'      bx <- splines::ns(x, knots = seq(from=extrap[1], to=extrap[2],
+#'                                       length.out=(n.splines.true+1))[
+#'                                         -c(1,n.splines.true+1)],
+#'                        Boundary.knots = extrap)
+#'      bx%*%beta
+#'    }
+#'    
+#'    # data generating model
+#'    n <- 200
+#'    set.seed(2)
+#'    beta0 <- runif(n.splines.true, -1,1)
+#'    alphaA <- alphaEps <- alphaH <- 1/sqrt(3)
+#'    A <- runif(n,-1,1)
+#'    H <- runif(n,-1,1)
+#'    X <- alphaA*A + alphaH*H + alphaEps*runif(n,-1,1)
+#'    Y <- fX(x=X,extrap=c(-.7,.7), beta=beta0) + .3*H + .2*runif(n,-1,1)
+#'    
+#'    x.new <- seq(-2,2,length.out=100)
+#'    f.new <- fX(x=x.new,extrap=c(-.7,.7), beta=beta0)
+#'    plot(X,Y, pch=20)
+#'    lines(x.new,f.new,col="blue",lwd=3)
+#'    
+#'    ## FIT!
+#'    fit <- NILE(Y, # response
+#'                X, # predictors (so far, only 1-dim supported)
+#'                A, # anchors (1 or 2-dim, although 2-dim is experimental so far)
+#'                lambda.star = "test", # (0 = OLS, Inf = IV, (0,Inf) =
+#'                # nonlinear anchor regression, "test" = NILE)
+#'                test = "penalized",
+#'                intercept = TRUE,
+#'                df = 50, # number of splines used for X -> Y
+#'                p.min = 0.05, # level at which test for lambda is performed
+#'                x.new = x.new, # values at which predictions are required
+#'                plot=TRUE, # diagnostics plots
+#'                f.true = function(x) fX(x,c(-.7,.7), beta0), # if supplied, the
+#'                # true causal function is added to the plot
+#'                par.x = list(lambda=NULL, # positive smoothness penalty for X -> Y,
+#'                             # if NULL, it is chosen by CV to minimize out-of-sample
+#'                             # AR objective
+#'                             breaks=NULL, # if breaks are supplied, exactly these
+#'                             # will be used for splines basis
+#'                             num.breaks=20, # will result in num.breaks+2 splines,
+#'                             # ignored if breaks is supplied.
+#'                             n.order=4 # order of splines
+#'                ),
+#'                par.a = list(lambda=NULL, # positive smoothness penalty for fit of
+#'                             # residuals onto A. If NULL, we first compute the OLS
+#'                             # fit of Y onto X,
+#'                             # and then choose lambdaA by CV to
+#'                             # minimize the out-of-sample MSE for predicting
+#'                             # the OLS residuals
+#'                             breaks=NULL, # same as above
+#'                             num.breaks=4, # same as above
+#'                             n.order=4 # same as above
+#'                ))
 #'
-#' @import TODO
+#' @import fda cvTools ggplot2 MASS expm stats
 #' @export
 NILE <- function(Y, X, A,
                  lambda.star = "test",
@@ -219,7 +286,6 @@ create.base <- function(x, num.breaks=3, breaks=NULL, n.order=4,
 }
 
 
-#' @import fda cvTools ggplot2 MASS expm stats
 predict.base <- function(object, xnew, ...){
   a <- c(list(x = xnew), object[c("basis", "pen.degree", "lambda",
                                   "intercept", "type")])
