@@ -2,9 +2,7 @@
 % Please edit documentation in R/source.R
 \name{NILE}
 \alias{NILE}
-\title{Method for estimating a nonlinear causal relationship X- > Y
-that is assumed to linearly extrapolate outside of the support
-of X}
+\title{NILE estimator}
 \usage{
 NILE(
   Y,
@@ -14,8 +12,6 @@ NILE(
   intercept = TRUE,
   df = 100,
   x.new = NULL,
-  test.statistic = NULL,
-  quantile.function = NULL,
   test = "penalized",
   p.min = 0.05,
   plot = TRUE,
@@ -32,36 +28,32 @@ NILE(
 
 \item{A}{A numeric vector with observations from the exogenous variable}
 
-\item{lambda.star}{weight which determines the relative importance of
-the OLS loss and the two-stage-least-squares (TSLS) loss in the estimation
-procedure. Can be either a positive numeric (with lambda.star = 0 corresponding to the OLS),
-Inf (corresponding to the TSLS), or "test" (corresponding to a data-driven
-choice of lambda.star). If lambda.star = "test" (the default), then lambda.star
-is chosen such that teh resulting estimator yields prediction residuals
-which "just" pass a statistical test for vanishing product moment with
-all nonlinear basis-transformations of A.}
+\item{lambda.star}{either a positive numeric, \code{Inf} or \code{"test"};
+weight which determines the relative importance of the OLS loss and the TSLS
+loss, see details.}
 
-\item{intercept}{logical, indicating whether an intercept should be included into
+\item{intercept}{logical; indicating whether an intercept should be included into
 the regression model}
 
-\item{df}{positive integer, indicating the number of basis splines used
-to model the nonlinear function X -> Y}
+\item{df}{positive integer; number of basis splines used
+to model the nonlinear function \eqn{X\to Y}{X -> Y}}
 
-\item{x.new}{numeric vector containing the x-values at which predictions
-are desried}
+\item{x.new}{numeric; x-values at which predictions are desried}
 
-\item{p.min}{numeric between 0 and 1, giving the significance level at
+\item{test}{character; !!!}
+
+\item{p.min}{numeric between 0 and 1; the significance level at
 which the test which determines lambda.star should be tested.}
 
-\item{plot}{logical, for diagnostic plots}
+\item{plot}{logical; diagnostic plots}
 
-\item{f.true}{real-valued function of one variable. If the groundtruth is known,
+\item{f.true}{real-valued function of one variable; If the groundtruth is known,
 it can be suplied and will be included in diagnostic plots.}
 
-\item{par.x}{a list of different parameters determining the B-spline regression
-of Y onto X
+\item{par.x}{a list of different parameters determining the \eqn{B}-spline regression
+of \eqn{Y} onto \eqn{X}
 \itemize{
-\item \code{breaks} numeric vector of knots at which B-spline is placed
+\item \code{breaks} numeric vector; knots at which B-spline is placed
 \item \code{num.breaks} positive interger; number of knots used (ignored if breaks is supplied)
 \item \code{n.order} positive integer; order of B-spline basis (default is 4, which corresponds
 to cubic splines)
@@ -70,7 +62,7 @@ and 2 (default) corresponds to a penalty on the second order derivative.
 }}
 
 \item{par.a}{a list of different parameters determining the B-spline regression
-of the residuals Y - B(X)*beta onto the residuals A-
+of the residuals \eqn{Y - B(X)\beta} onto the residuals A- !!!
 \itemize{
 \item \code{breaks} same as above
 \item \code{num.breaks} same as above
@@ -80,20 +72,69 @@ of the residuals Y - B(X)*beta onto the residuals A-
 
 \item{par.cv}{A list with parameters for the cross-validation procedure.
 \itemize{
-\item \code{num.folds} either "leave-one-out" or positive integer giving the
-number of CV folds (default = 10)
-\item \code{optim} one of "optimize" (default) or "grid.search"; indicating the
-optimization method used for cross-validation.
+\item \code{num.folds} either "leave-one-out" or positive integer; number of CV folds (default = 10)
+\item \code{optim} one of "optimize" (default) or "grid.search"; optimization method used for cross-validation.
 \item \code{n.grid} positive integer; number of grid points used in grid search
 }}
 }
 \value{
-TODO
+An object of class AR, containing the following elements
+\itemize{
+\item \code{coefficients} estimated splines coefficients for the relationship X -> Y
+\item \code{residuals} prediction residuals
+\item \code{fitted.values} fitted values
+\item \code{betaA} estimated spline coefficients for the regression of the prediction
+residuals onto the variable A
+\item \code{fitA} fitted values for the regression of the prediction
+residuals onto the variable A
+\item \code{Y} the response variable
+\item \code{BX} basis object holding all relevant information about the B-spline
+basis used for the regression X -> Y
+\item \code{BA} basis object holding all relevant information about the B-spline
+basis used for the regression of the residuals onto A
+\item \code{ols} OLS loss at the estimated parameters
+\item \code{iv} TSLS loss at the estimated parameters
+\item \code{ar} NILE loss at the estimated parameters, that is, OLS + lambda.star*TSLS
+\item \code{intercept} was an intercept supplied?
+\item \code{lambdaX} penalty parameter used for the spline regression X -> Y
+\item \code{lambdaA} penalty parameter used for the regression of residuals onto A
+\item \code{lambda.star} the (estimated) value for lambda.star
+\item \code{pred} predicted values at the supplied vector x.new
+}
 }
 \description{
-Method for estimating a nonlinear causal relationship X- > Y
+Method for estimating a nonlinear causal relationship \eqn{X\to Y}{X -> Y}
 that is assumed to linearly extrapolate outside of the support
-of X
+of \eqn{X}.
+}
+\details{
+The NILE estimator can be used to learn a nonlinear causal influence
+of a real-valued predictor \eqn{X} on a real-valued response variable \eqn{Y}.
+It exploits an instrumental variable setting; it assumes that the
+variable \eqn{A} is a valid instrument.
+The estimator uses B-splines to estimate the nonlinear relationship. It further
+assumes that the causal function extrapolates lienarly outside of the empirical support
+of \eqn{X}, and can therefore be used to obtain causal predictions (that is, predicted
+values for \eqn{Y} under confounding-removing interventions on \eqn{X}) even for values of
+\eqn{X} which lie outside the training support.
+
+On a more technical side, the NILE estimator proceeds as follows. First, two B-splines
+\eqn{B = (B_1,...,B_{df})}{B = (B_1,...,B_df)} and \eqn{C = (C_1, ..., C_{df})}{C = (C_1, ..., C_df)}
+are constructed, which span the values of \eqn{X} and \eqn{A}, respectively.
+These give rise to the loss functions OLS(\eqn{theta}), which
+corresponds to the MSE for the prediction residuals \eqn{Y - \theta^T B}, and
+TSLS(\eqn{\theta}),
+which are the fitted values of the spline-regression of the residuals
+\eqn{Y - \theta^T B}
+onto the spline basis \eqn{C}. The NILE estimator the estimates \eqn{\theta}
+by minimizing the objective function
+\deqn{OLS(\theta) + \texttt{lambda.star}  TSLS(\theta) + PEN(\theta),}{
+OLS(\theta) + lambda.star * TSLS(\theta) + PEN(\theta),}
+where PEN(\eqn{\theta}) is a quadratic penalty term which enforces smoothness.
+
+The parameter \code{lambda.star} is chosen as the largest positive value for which the
+corresponding solution yields prediction residuals which pass a test for vanishing
+product moment with all basis functions \eqn{C_1(A), \dots C_{df}(A)}{C_1(A), ... C_df(A)}.
 }
 \examples{
    n.splines.true <- 4
@@ -104,7 +145,7 @@ of X
                        Boundary.knots = extrap)
      bx\%*\%beta
    }
-   
+
    # data generating model
    n <- 200
    set.seed(2)
@@ -112,14 +153,14 @@ of X
    alphaA <- alphaEps <- alphaH <- 1/sqrt(3)
    A <- runif(n,-1,1)
    H <- runif(n,-1,1)
-   X <- alphaA*A + alphaH*H + alphaEps*runif(n,-1,1)
-   Y <- fX(x=X,extrap=c(-.7,.7), beta=beta0) + .3*H + .2*runif(n,-1,1)
-   
+   X <- alphaA * A + alphaH * H + alphaEps*runif(n,-1,1)
+   Y <- fX(x=X,extrap=c(-.7,.7), beta=beta0) + .3 * H + .2 * runif(n,-1,1)
+
    x.new <- seq(-2,2,length.out=100)
    f.new <- fX(x=x.new,extrap=c(-.7,.7), beta=beta0)
    plot(X,Y, pch=20)
    lines(x.new,f.new,col="blue",lwd=3)
-   
+
    ## FIT!
    fit <- NILE(Y, # response
                X, # predictors (so far, only 1-dim supported)
@@ -155,12 +196,9 @@ of X
                ))
 
 }
+\references{
+(include arxiv link when done)
+}
 \author{
 Rune Christiansen \email{krunechristiansen@math.ku.dk}
-
-\enumerate{
-\item ... with some equations \eqn{x^2 + y^2 = 1}...
-\item or plain text
-\item or reference to arguments \code{X, Y}.
-}
 }

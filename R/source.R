@@ -1,6 +1,8 @@
-#' Method for estimating a nonlinear causal relationship X- > Y
+#' NILE estimator
+#'
+#' Method for estimating a nonlinear causal relationship \eqn{X\to Y}{X -> Y}
 #' that is assumed to linearly extrapolate outside of the support
-#' of X.
+#' of \eqn{X}.
 #'
 #'
 #'
@@ -10,21 +12,22 @@
 #' @param Y A numeric vector with observations from the target variable
 #' @param X A numeric vector with observations from the predictor variable
 #' @param A A numeric vector with observations from the exogenous variable
-#' @param lambda.star either a positive numeric, Inf or "test"; weight which
-#' determines the relative importance of the OLS loss and the TSLS loss,
-#' see details.
+#' @param lambda.star either a positive numeric, \code{Inf} or \code{"test"};
+#' weight which determines the relative importance of the OLS loss and the TSLS
+#' loss, see details.
 #' @param intercept logical; indicating whether an intercept should be included into
 #' the regression model
 #' @param df positive integer; number of basis splines used
-#' to model the nonlinear function X -> Y
+#' to model the nonlinear function \eqn{X\to Y}{X -> Y}
 #' @param x.new numeric; x-values at which predictions are desried
+#' @param test character; !!!
 #' @param p.min numeric between 0 and 1; the significance level at
 #' which the test which determines lambda.star should be tested.
 #' @param plot logical; diagnostic plots
 #' @param f.true real-valued function of one variable; If the groundtruth is known,
 #' it can be suplied and will be included in diagnostic plots.
-#' @param par.x a list of different parameters determining the B-spline regression
-#' of Y onto X
+#' @param par.x a list of different parameters determining the \eqn{B}-spline regression
+#' of \eqn{Y} onto \eqn{X}
 #' \itemize{
 #' \item \code{breaks} numeric vector; knots at which B-spline is placed
 #' \item \code{num.breaks} positive interger; number of knots used (ignored if breaks is supplied)
@@ -34,7 +37,7 @@
 #' and 2 (default) corresponds to a penalty on the second order derivative.
 #' }
 #' @param par.a a list of different parameters determining the B-spline regression
-#' of the residuals Y - B(X)*beta onto the residuals A-
+#' of the residuals \eqn{Y - B(X)\beta} onto the residuals A- !!!
 #' \itemize{
 #' \item \code{breaks} same as above
 #' \item \code{num.breaks} same as above
@@ -49,27 +52,32 @@
 #' }
 #'
 #' @details The NILE estimator can be used to learn a nonlinear causal influence
-#' of a real-valued predictor X on a real-valued response variable Y. It exploits
-#' an instrumental variable setting; it assumes that the variable A is a valid instrument.
+#' of a real-valued predictor \eqn{X} on a real-valued response variable \eqn{Y}.
+#' It exploits an instrumental variable setting; it assumes that the
+#' variable \eqn{A} is a valid instrument.
 #' The estimator uses B-splines to estimate the nonlinear relationship. It further
-#' assumes that the causal function extrapolates lienarly outside of the emirical support
-#' of X, and can therefore be used to obtain causal predictions (that is, predicted
-#' values for Y under confounding-removing interventions on X) even for values of
-#' X which lie outside the training support.
+#' assumes that the causal function extrapolates lienarly outside of the empirical support
+#' of \eqn{X}, and can therefore be used to obtain causal predictions (that is, predicted
+#' values for \eqn{Y} under confounding-removing interventions on \eqn{X}) even for values of
+#' \eqn{X} which lie outside the training support.
 #'
 #' On a more technical side, the NILE estimator proceeds as follows. First, two B-splines
-#' B = (B_1,...,B_df) and C = (C_1, ..., C_df) are constructed, which span the values
-#' of X and A, respectively. These give rise to the loss functions OLS(theta), which
-#' corresponds to the MSE for the prediction residuals Y - theta^T B, and TSLS(theta),
-#' which are the fitted values of the spline-regression of the residuals Y - theta^T B
-#' onto the spline basis C. The NILE estimator the estimates theta by minimizing the
-#' objective function
-#' OLS(theta) + lambda.star*TSLS(theta) + PEN(theta),
-#' where PEN(theta) is a quadratic penalty term which enforces smoothness.
+#' \eqn{B = (B_1,...,B_{df})}{B = (B_1,...,B_df)} and \eqn{C = (C_1, ..., C_{df})}{C = (C_1, ..., C_df)}
+#' are constructed, which span the values of \eqn{X} and \eqn{A}, respectively.
+#' These give rise to the loss functions OLS(\eqn{theta}), which
+#' corresponds to the MSE for the prediction residuals \eqn{Y - \theta^T B}, and
+#' TSLS(\eqn{\theta}),
+#' which are the fitted values of the spline-regression of the residuals
+#' \eqn{Y - \theta^T B}
+#' onto the spline basis \eqn{C}. The NILE estimator the estimates \eqn{\theta}
+#' by minimizing the objective function
+#' \deqn{OLS(\theta) + \texttt{lambda.star}  TSLS(\theta) + PEN(\theta),}{
+#' OLS(\theta) + lambda.star * TSLS(\theta) + PEN(\theta),}
+#' where PEN(\eqn{\theta}) is a quadratic penalty term which enforces smoothness.
 #'
-#' The parameter lambda.star is chosen as the largest positive value for which the
+#' The parameter \code{lambda.star} is chosen as the largest positive value for which the
 #' corresponding solution yields prediction residuals which pass a test for vanishing
-#' product moment with all basis functions C_1(A), ... C_df(A).
+#' product moment with all basis functions \eqn{C_1(A), \dots C_{df}(A)}{C_1(A), ... C_df(A)}.
 #'
 #'
 #' @return An object of class AR, containing the following elements
