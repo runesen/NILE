@@ -1,5 +1,5 @@
-devtools::install_github("runesen/NILE/code")
-library(NILE)
+# devtools::install_github("runesen/NILE/code")
+# library(NILE)
 ## The NILE estimator
 # true (unknown) functional relationship X -> Y
 # (linearly extrapolating beyond "extrap")
