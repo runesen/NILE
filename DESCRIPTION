@@ -20,3 +20,6 @@ Imports:
     expm,
     gridExtra,
     stats
+Suggests: 
+    testthat,
+    covr

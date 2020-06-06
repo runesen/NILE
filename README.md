@@ -4,7 +4,7 @@ NILE
 ====
 
 <!-- badges: start -->
-[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) <!-- badges: end -->
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Travis build status](https://travis-ci.com/runesen/NILE.svg?branch=master)](https://travis-ci.com/runesen/NILE) [![Codecov test coverage](https://codecov.io/gh/runesen/NILE/branch/master/graph/badge.svg)](https://codecov.io/gh/runesen/NILE?branch=master) <!-- badges: end -->
 
 The goal of NILE is to ...
 
@@ -31,4 +31,4 @@ This is a basic example which shows you how to solve a common problem:
 
     #> [1] "lambda.cv.a =  1.42932324587573"
     #> [1] "lambda.cv.x =  0.0015933292003293"
-    #> [1] "lambda.nile.p.uncorr =  3.5873327255249"
+    #> [1] "lambda.star.p.uncorr =  1.45538091659546"
