@@ -1,8 +1,8 @@
 ---
-title: "impossibility"
+title: "Impossibility plots"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{impossibility}
+  %\VignetteIndexEntry{Impossibility plots}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
 ```{r include = FALSE}
 knitr::read_chunk('../scripts/forvignettes/impossibility/impossibility_results.R')
 ```
+
+To produce the impossibility plots you type the following code.
+If you have `NILE` installed, you can copy-paste the code in this guide by typing `edit(vignette("impossibility"))`.
 
 ```{r plot-impossibility, echo=TRUE, eval=FALSE}
 
