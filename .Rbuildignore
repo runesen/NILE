@@ -10,3 +10,5 @@
 ^README\.Rmd$
 ^LICENSE\.md$
 ^codecov\.yml$
+^doc$
+^Meta$

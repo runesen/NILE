@@ -1,0 +1,24 @@
+---
+title: "impossibility"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{impossibility}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r include = FALSE}
+knitr::read_chunk('../scripts/forvignettes/impossibility/impossibility_results.R')
+```
+
+```{r plot-impossibility, echo=TRUE, eval=FALSE}
+
+```
+

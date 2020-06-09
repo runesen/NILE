@@ -1,0 +1,31 @@
+---
+title: "Reproduce paper results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reproduce paper results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/REFERENCES.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Overview
+To reproduce the results from @eng2019 you can follow the guides below:
+
+* [Varying instruments](varying_instruments.html) 
+* [Varying curvature](varying_curvature.html)
+* [Varying confouding](varying_counfounding.html)
+* [Sampling causal functions](sampling_causal_function.html)
+* [Overlayed estimates](overlayed_estimates.html)
+* [Impossibility](impossibility.html)
+
+# References
+
+
+

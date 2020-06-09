@@ -1,5 +1,7 @@
 ## impossibility result for X = g(A) + H + eps
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+## ---- plot-impossibility ----
 library(ggplot2)
 library(gridExtra)
 library(grid)
@@ -56,37 +58,37 @@ Hi <- rnorm(n)
 Xi <- g(Ai, eps=.5, C=5) + Hi + .5*rnorm(n)
 Yi <- beta*Xi + Hi + .5*rnorm(n)
 
-df <- data.frame(X=c(X,Xi), A=c(A,Ai), Y=c(Y,Yi), 
-                 setting = factor(rep(c("observational", "interventional"), each=n), 
+df <- data.frame(X=c(X,Xi), A=c(A,Ai), Y=c(Y,Yi),
+                 setting = factor(rep(c("observational", "interventional"), each=n),
                                   levels = c("observational", "interventional")))
 x.seq <- seq(min(df$X), max(df$X), length.out = 100)
-df.line <- data.frame(x = rep(x.seq, 2), 
-                      y = c(bOLS[1] + bOLS[2]*x.seq, 
-                            x.seq), 
+df.line <- data.frame(x = rep(x.seq, 2),
+                      y = c(bOLS[1] + bOLS[2]*x.seq,
+                            x.seq),
                       model = factor(rep(c("candidate", "causal"), each = length(x.seq))))
 
-pXY <- ggplot() + 
-  geom_point(data=df, aes(X,Y, col=setting, shape = setting), alpha=.7, size=3) + 
-  scale_color_manual(values = c("black", "red")) + 
-  geom_line(data=subset(df.line, model == "candidate"), aes(x,y),size=1, col = "blue") + 
+pXY <- ggplot() +
+  geom_point(data=df, aes(X,Y, col=setting, shape = setting), alpha=.7, size=3) +
+  scale_color_manual(values = c("black", "red")) +
+  geom_line(data=subset(df.line, model == "candidate"), aes(x,y),size=1, col = "blue") +
   geom_line(data=subset(df.line, model == "causal"), aes(x,y),size=1, col = "#009E73", lty = "dashed") +
-  annotate(geom = "text", x = -1, y = 5, label = "training data") + 
-  annotate(geom = "text", x = 5, y = -1, label = "test data") + 
-  annotate(geom = "text", x = 3, y = 10, label = "candidate model") + 
-  # annotate(geom = "text", x = 6, y = 1, label = "causal model") + 
-  annotate(geom = "text", x = 7.5, y = 6.5, label = "f", col = "#009E73") + 
+  annotate(geom = "text", x = -1, y = 5, label = "training data") +
+  annotate(geom = "text", x = 5, y = -1, label = "test data") +
+  annotate(geom = "text", x = 3, y = 10, label = "candidate model") +
+  # annotate(geom = "text", x = 6, y = 1, label = "causal model") +
+  annotate(geom = "text", x = 7.5, y = 6.5, label = "f", col = "#009E73") +
   geom_segment(aes(x = -.5, y = 4, xend = 0, yend =2),
-               arrow = arrow(length = unit(0.3, "cm"))) + 
+               arrow = arrow(length = unit(0.3, "cm"))) +
   geom_segment(aes(x = 5, y = 0, xend = 5, yend = 2),
-               arrow = arrow(length = unit(0.3, "cm"))) + 
+               arrow = arrow(length = unit(0.3, "cm"))) +
   geom_segment(aes(x = 5, y = 10, xend = 6, yend = 10),
-               arrow = arrow(length = unit(0.3, "cm"))) + 
+               arrow = arrow(length = unit(0.3, "cm"))) +
   # geom_segment(aes(x = 6, y = 2, xend = 6.6, yend = 6.3),
-  #              arrow = arrow(length = unit(0.3, "cm"))) + 
-  xlab("x") + ylab("y") + 
-  # geom_abline(intercept = bOLS[1], slope = bOLS[2]) + 
-  theme(legend.position = "none", 
-        text = element_text(size=15), 
+  #              arrow = arrow(length = unit(0.3, "cm"))) +
+  xlab("x") + ylab("y") +
+  # geom_abline(intercept = bOLS[1], slope = bOLS[2]) +
+  theme(legend.position = "none",
+        text = element_text(size=15),
         plot.title = element_text(size = 14, hjust=.5))
 pXY
 
@@ -100,28 +102,28 @@ m <- max(hist.a)
 hist.a <- 4*hist.a/m
 df.hist <- data.frame(a=c(grid.a, 1.55), h = c(hist.a, 4), data = c(rep("1",length(grid.a)), "2"))
 
-pA <- ggplot(df.A, aes(a,g)) + 
+pA <- ggplot(df.A, aes(a,g)) +
   geom_segment(aes(x = 1, y = .8, xend = 1.4, yend = .1),
-               arrow = arrow(length = unit(0.3, "cm"))) + 
+               arrow = arrow(length = unit(0.3, "cm"))) +
   geom_line(aes(lty = seq), size=1, col = "black") +
   # geom_line(size=1, col = "black") +
-  xlab("a") + ylab("") + 
-  geom_bar(data=df.hist, aes(x=a,y=h,fill=data), alpha=.2, stat = "identity") + 
-  annotate(geom = "text", x = -1.6, y = 4.5, label = "g") + 
+  xlab("a") + ylab("") +
+  geom_bar(data=df.hist, aes(x=a,y=h,fill=data), alpha=.2, stat = "identity") +
+  annotate(geom = "text", x = -1.6, y = 4.5, label = "g") +
   geom_segment(aes(x = -.8, y = 3.5, xend = -1, yend = 3.5),
-               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) + 
+               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) +
   geom_segment(aes(x = .8, y = 3.5, xend = 1, yend = 3.5),
-               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) + 
-  annotate(geom = "text", x = 0, y = 3.5, label = "training support") + 
-  annotate(geom = "text", x = .9, y = 1, label = "intervention") + 
-  scale_fill_manual(values= c("black", "red")) + 
+               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) +
+  annotate(geom = "text", x = 0, y = 3.5, label = "training support") +
+  annotate(geom = "text", x = .9, y = 1, label = "intervention") +
+  scale_fill_manual(values= c("black", "red")) +
   scale_linetype_manual(values = c("dashed", "solid", "dashed")) +
   theme(legend.position = "none",
-        text = element_text(size=15), 
+        text = element_text(size=15),
         plot.title = element_text(size = 14, hjust=.5))
 pA
 
-all.A <- arrangeGrob(pA, pXY, ncol = 2, 
+all.A <- arrangeGrob(pA, pXY, ncol = 2,
                      top = textGrob("support-extending interventions on A", gp=gpar(fontsize=15)))
 
 grid.arrange(pA, pXY, ncol=2)
@@ -171,25 +173,25 @@ Xi <- runif(n,1.5,2)
 Yi <- f(Xi) + Hi + .5*rnorm(n)
 
 
-df1 <- data.frame(X=c(X,Xi), A=c(A,Ai), Y=c(Y,Yi), 
-                 setting = factor(rep(c("observational", "interventional"), each=n), 
+df1 <- data.frame(X=c(X,Xi), A=c(A,Ai), Y=c(Y,Yi),
+                 setting = factor(rep(c("observational", "interventional"), each=n),
                                   levels = c("observational", "interventional")))
 x.seq <- seq(-2,2,length.out = 1000)
-df1.line <- data.frame(x = rep(x.seq, 2), 
+df1.line <- data.frame(x = rep(x.seq, 2),
                       y = c(-x.seq, f(x.seq)),
                       model = factor(rep(c("candidate", "causal"), each = length(x.seq))))
 
-pXY1 <- ggplot() + 
-  geom_point(data=df1, aes(X,Y, col=setting, shape = setting), alpha=.7, size=3) + 
-  scale_color_manual(values = c("black", "red")) + 
+pXY1 <- ggplot() +
+  geom_point(data=df1, aes(X,Y, col=setting, shape = setting), alpha=.7, size=3) +
+  scale_color_manual(values = c("black", "red")) +
   geom_line(data=subset(df1.line, model == "candidate"), aes(x,y),size=1, col = "blue") +
   geom_line(data=subset(df1.line, model == "causal"), aes(x,y),size=1, col = "#009E73", lty = "dashed") +
   annotate(geom = "text", x = 0, y = 3.5, label = "training data") +
   annotate(geom = "text", x = 1, y = 5.5, label = "test data") +
   annotate(geom = "text", x = -1.2, y = 5.5, label = "candidate model") +
   annotate(geom = "text", x = -1.5, y = -1, label = "f", col = "#009E73") +
-  ggtitle("support-extending interventions on X") + 
-  xlab("x") + ylab("y") + 
+  ggtitle("support-extending interventions on X") +
+  xlab("x") + ylab("y") +
   # annotate(geom = "text", x = 6, y = 1, label = "causal model") +
   geom_segment(aes(x = 0, y = 3, xend = 0, yend = 1.5),
                arrow = arrow(length = unit(0.3, "cm"))) +
@@ -198,22 +200,22 @@ pXY1 <- ggplot() +
   geom_segment(aes(x = -1.2, y = 5, xend = -1.6, yend = 2.5),
                arrow = arrow(length = unit(0.3, "cm"))) +
   geom_segment(aes(x = -.8, y = -5, xend = -1, yend = -5),
-               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) + 
+               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) +
   geom_segment(aes(x = .8, y = -5, xend = 1, yend = -5),
-               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) + 
+               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) +
   geom_segment(aes(x = 1.5, y = -5, xend = 2, yend = -5),
-               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) + 
+               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) +
   geom_segment(aes(x = 2, y = -5, xend = 1.5, yend = -5),
-               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) + 
-  annotate(geom = "text", x = 0, y = -5, label = "training support") + 
-  coord_cartesian(ylim=c(-5.5,6)) + 
+               arrow = arrow(length = unit(0.3, "cm"), angle = 90)) +
+  annotate(geom = "text", x = 0, y = -5, label = "training support") +
+  coord_cartesian(ylim=c(-5.5,6)) +
   annotate(geom = "text", x = 1.5, y = -3.5, label = "test support") +
   # geom_segment(aes(x = 1, y = -3.5, xend = 1.5, yend = -4),
   #              arrow = arrow(length = unit(0.3, "cm"))) +
-  # xlab("x") + ylab("y") + 
-  # geom_abline(intercept = bOLS[1], slope = bOLS[2]) + 
-  theme(legend.position = "none", 
-        text = element_text(size=15), 
+  # xlab("x") + ylab("y") +
+  # geom_abline(intercept = bOLS[1], slope = bOLS[2]) +
+  theme(legend.position = "none",
+        text = element_text(size=15),
         plot.title = element_text(size = 14, hjust=.5))
 
 pdf("../figures/impossibility_all.pdf", width = 12, height = 3.5)

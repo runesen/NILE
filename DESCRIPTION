@@ -22,4 +22,7 @@ Imports:
     stats
 Suggests: 
     testthat,
-    covr
+    covr,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
