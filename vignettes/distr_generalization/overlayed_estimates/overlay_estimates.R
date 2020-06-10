@@ -1,9 +1,11 @@
-## Non-linear IV estimation. 
+## Non-linear IV estimation.
 onServer <- TRUE
 if(!onServer){
   setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
   library(ggplot2)
 }
+
+## ---- overlay-estimates ----
 library(NILE)
 library(R.utils)
 library(splines)
@@ -21,7 +23,7 @@ set.seed(1)
 N <- 100000
 A <- runif(N,-1,1)
 H <- runif(N,-1,1)
-X <- alphaA*A + alphaH*H + alphaEps*runif(N,-1,1) 
+X <- alphaA*A + alphaH*H + alphaEps*runif(N,-1,1)
 q <- quantile(X, probs = c(.05,.95))
 qX <- c(-1,1)*(q[2]-q[1])/2
 suppX <- c(-1,1)*(alphaA + alphaH + alphaEps)
@@ -35,7 +37,7 @@ fX <- function(x=x.new, qx=qX, beta=beta){
 }
 A <- runif(n,-1,1)
 H <- runif(n,-1,1)
-X <- alphaA*A + alphaH*H + alphaEps*runif(n,-1,1) 
+X <- alphaA*A + alphaH*H + alphaEps*runif(n,-1,1)
 Y <- fX(X,qX,beta) + .3*H + .2*runif(n,-1,1)
 x.new <- seq(-2,2,length.out = 100)
 f.new <- fX(x.new, qX, beta)
@@ -43,45 +45,45 @@ plot(X,Y)
 lines(x.new, f.new)
 
 pred.frame <- NULL
-k <- 0 
+k <- 0
 Nsim <- 20
 for(i in 1:Nsim){
   k <- k+1
   set.seed(k)
   print(paste("sim = ", i))
-  
+
   A <- runif(n,-1,1)
   H <- runif(n,-1,1)
-  X <- alphaA*A + alphaH*H + alphaEps*runif(n,-1,1) 
+  X <- alphaA*A + alphaH*H + alphaEps*runif(n,-1,1)
   Y <- fX(X,qX,beta) + .3*H + .2*runif(n,-1,1)
-  
-  fit.ols <- tryCatch({withTimeout({NILE(Y=Y,X=X,A=A,lambda.star=0,df=df.X,x.new=x.new,plot=FALSE,par.a=list(lambda=0.1))$pred}, timeout = 180, onTimeout = "error")}, 
+
+  fit.ols <- tryCatch({withTimeout({NILE(Y=Y,X=X,A=A,lambda.star=0,df=df.X,x.new=x.new,plot=FALSE,par.a=list(lambda=0.1))$pred}, timeout = 180, onTimeout = "error")},
                       error=function(e){
                         print(paste("ERROR OLS: ", e))
                         rep(NA, length(x.new))
                       })
-  
-  nile <- tryCatch({withTimeout({NILE(Y=Y,X=X,A=A,lambda.star="test",df=df.X,x.new=x.new,plot=FALSE)}, timeout = 180, onTimeout = "error")}, 
+
+  nile <- tryCatch({withTimeout({NILE(Y=Y,X=X,A=A,lambda.star="test",df=df.X,x.new=x.new,plot=FALSE)}, timeout = 180, onTimeout = "error")},
                    error=function(e){
                      print(paste("ERROR NILE: ", e))
                      list(pred = rep(NA, length(x.new)), lambda.star = NA)
                    })
   fit.nile <- nile$pred
   lambda.star <- nile$lambda.star
-  
-  fit.npregiv <- tryCatch({withTimeout({npregiv(y=Y,z=X,w=A,zeval=x.new)$phi.eval}, timeout = 180, onTimeout = "error")}, 
+
+  fit.npregiv <- tryCatch({withTimeout({npregiv(y=Y,z=X,w=A,zeval=x.new)$phi.eval}, timeout = 180, onTimeout = "error")},
                           error=function(e){
                             print(paste("ERROR NPREGIV: ", e))
                             rep(NA, length(x.new))
                           })
-  
-  pred.frame.loop <- data.frame(x = x.new, 
-                                fhat = c(fit.ols, fit.nile, fit.npregiv), 
+
+  pred.frame.loop <- data.frame(x = x.new,
+                                fhat = c(fit.ols, fit.nile, fit.npregiv),
                                 ftrue = rep(f.new, 3),
                                 method = rep(c("OLS", "NILE", "NPREGIV"), each = length(x.new)),
                                 lambda.star = lambda.star,
-                                alphaA = alphaA, 
-                                alphaH = alphaH, 
+                                alphaA = alphaA,
+                                alphaH = alphaH,
                                 alphaEps = alphaEps,
                                 qXmin = min(qX),
                                 qXmax = max(qX),

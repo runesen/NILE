@@ -1,6 +1,6 @@
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-## ---- plot-varying-instrument ----
+## ---- plot-varying-inst ----
 library(ggplot2)
 library(reshape2)
 library(gridExtra)

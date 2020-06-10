@@ -1,9 +1,10 @@
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+## ---- plot-varying-conf ----
 library(ggplot2)
 library(reshape2)
 library(gridExtra)
 theme_set(theme_bw())
-pred.frame <- rbind(read.table("varying_confounding_fit1.txt", header = TRUE), 
+pred.frame <- rbind(read.table("varying_confounding_fit1.txt", header = TRUE),
                     read.table("varying_confounding_fit11.txt", header = TRUE),
                     read.table("varying_confounding_fit21.txt", header = TRUE),
                     read.table("varying_confounding_fit31.txt", header = TRUE),
@@ -16,7 +17,7 @@ pred.frame <- rbind(read.table("varying_confounding_fit1.txt", header = TRUE),
 
 ## avg lambdastar
 df.summary <- aggregate(lambda.star ~ experiment, pred.frame, mean, na.rm=1)
-## 
+##
 n <- nrow(pred.frame)
 n.x <- length(unique(pred.frame$x))
 n.m <- length(unique(pred.frame$method))
@@ -37,12 +38,12 @@ error.frame.x.abs <- aggregate(sq.err ~ method + alphaH + qXmax + x.abs + sim, p
 error.frame.x.abs <- error.frame.x.abs[order(error.frame.x.abs$method, error.frame.x.abs$alphaH, error.frame.x.abs$sim),]
 n.x.abs <- length(unique(error.frame.x.abs$x.abs))
 error.frame.x.abs$worst.case.mse <- sapply(1:nrow(error.frame.x.abs), function(i) max(error.frame.x.abs$sq.err[(1+floor((i-1)/n.x.abs)*n.x.abs):i])) + var_xi_Y
-# error.frame.x.abs$method <- factor(error.frame.x.abs$method, 
+# error.frame.x.abs$method <- factor(error.frame.x.abs$method,
 #                                    levels = c("OLS", "NILE", "NPREGIV", "ORACLE"))
 error.frame.x.abs$alphaH <- factor(error.frame.x.abs$alphaH,
                                        levels = sort(unique(error.frame.x.abs$alphaH)),
-                                       labels = c(expression(paste("(", alpha[A], ",", alpha[H], ",", alpha[epsilon], ")  =  (", sqrt(1/3),",", 0,",", sqrt(2/3), ")")), 
-                                                  expression(paste("(", alpha[A],",", alpha[H],",", alpha[epsilon], ")  =  (", sqrt(1/3),",", sqrt(1/3),",", sqrt(1/3), ")")), 
+                                       labels = c(expression(paste("(", alpha[A], ",", alpha[H], ",", alpha[epsilon], ")  =  (", sqrt(1/3),",", 0,",", sqrt(2/3), ")")),
+                                                  expression(paste("(", alpha[A],",", alpha[H],",", alpha[epsilon], ")  =  (", sqrt(1/3),",", sqrt(1/3),",", sqrt(1/3), ")")),
                                                   expression(paste("(", alpha[A], ",",alpha[H],",", alpha[epsilon], ")  =  (", sqrt(1/3),",", sqrt(2/3),",", 0, ")"))))
 
 error.frame.x.abs.avg <- aggregate(worst.case.mse ~ method + alphaH + qXmax + x.abs, error.frame.x.abs, mean)
@@ -57,7 +58,7 @@ error.frame.x.abs.avg$avg <- TRUE
 error.frame.x.abs$avg <- FALSE
 error.frame.x.abs <- rbind(error.frame.x.abs, error.frame.x.abs.avg)
 
-error.frame.x.abs$method <- factor(error.frame.x.abs$method, 
+error.frame.x.abs$method <- factor(error.frame.x.abs$method,
                                    levels = c("OLS", "NILE", "NPREGIV", "ORACLE"))
 
 qX.frame <- subset(error.frame.x.abs.avg, method == "OLS" & x.abs == 2)
@@ -70,35 +71,35 @@ rects2$xend <- 2
 rects <- rbind(rects1, rects2)
 rects$col <- factor(rep(1:2, each=n.exp))
 
-############# 
+#############
 ## plotting
-############# 
+#############
 
-p <- ggplot() + 
-  # geom_density(data=df.plt, aes(x=x.plt),alpha=.5) + 
+p <- ggplot() +
+  # geom_density(data=df.plt, aes(x=x.plt),alpha=.5) +
   geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf, fill=col), alpha=.1) +
-  geom_line(data=error.frame.x.abs, aes(x.abs, worst.case.mse, col=method, lty = method, group = interaction(method,sim,avg), alpha=avg, size = avg)) + 
+  geom_line(data=error.frame.x.abs, aes(x.abs, worst.case.mse, col=method, lty = method, group = interaction(method,sim,avg), alpha=avg, size = avg)) +
   #geom_line(data=error.frame.x.abs.avg, aes(x.abs, worst.case.mse, col=method, lty = method), size=1) +
-  # facet_wrap(. ~ alphaA + alphaH + alphaEps, ncol=5) + 
-  # geom_vline(aes(xintercept = qXmax),lty=2) + 
-  # geom_hline(yintercept = var_xi_Y,lty=2, col = "black") + 
-  facet_grid(. ~ alphaH, labeller = label_parsed) + 
-  # ggtitle(expression(paste("constant instrument strength alpha_A = ", 1/sqrt(3)))) + 
-  # ggtitle(expression(paste("constant instrument strength ", alpha[A], " = ", sqrt(1/3)))) + 
-  # gtitle("generalization performance for different confounding strength") + 
-  scale_size_manual(values = c(.2, 1)) + 
-  scale_alpha_manual(values = c(.2, 1)) + 
+  # facet_wrap(. ~ alphaA + alphaH + alphaEps, ncol=5) +
+  # geom_vline(aes(xintercept = qXmax),lty=2) +
+  # geom_hline(yintercept = var_xi_Y,lty=2, col = "black") +
+  facet_grid(. ~ alphaH, labeller = label_parsed) +
+  # ggtitle(expression(paste("constant instrument strength alpha_A = ", 1/sqrt(3)))) +
+  # ggtitle(expression(paste("constant instrument strength ", alpha[A], " = ", sqrt(1/3)))) +
+  # gtitle("generalization performance for different confounding strength") +
+  scale_size_manual(values = c(.2, 1)) +
+  scale_alpha_manual(values = c(.2, 1)) +
   scale_color_manual(values = c("#D55E00",
                                 #"#0072B2",
                                 "#0072B2", "#CC79A7", "#009E73")) +
   scale_linetype_manual(values = c(rep("solid",3), "dashed")) +
   scale_fill_manual(values = c("black", "transparent")) +
-  coord_cartesian(xlim = c(0,2), ylim = c(0,.3)) + 
-  xlab("generalization to interventions up to strength") + ylab("worst-case MSE")  + 
-  theme(plot.title = element_text(hjust=0.5), 
+  coord_cartesian(xlim = c(0,2), ylim = c(0,.3)) +
+  xlab("generalization to interventions up to strength") + ylab("worst-case MSE")  +
+  theme(plot.title = element_text(hjust=0.5),
         #legend.position = "none",
-        legend.background = element_rect(fill = "transparent", colour = NA), 
-        legend.key = element_rect(fill = "transparent", colour = NA)) + 
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.key = element_rect(fill = "transparent", colour = NA)) +
   guides(fill="none", lty= "none", size = "none", alpha = "none")
 p
 
@@ -107,6 +108,7 @@ pdf("varying_confounding_with_variability.pdf", width = 8, height = 2.5)
 p
 dev.off()
 
+## ---- private ----
 pdf("~/Google_Drive/phd/nonlinearIV/figures/varying_confounding_with_variability.pdf", width = 8, height = 2.5)
 p
 dev.off()

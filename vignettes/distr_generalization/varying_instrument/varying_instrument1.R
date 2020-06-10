@@ -6,7 +6,7 @@ if(!onServer){
   library(ggplot2)
 }
 
-## ---- varying-instrument ----
+## ---- varying-inst ----
 library(NILE)
 library(R.utils)
 library(splines)

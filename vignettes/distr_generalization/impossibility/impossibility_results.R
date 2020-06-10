@@ -19,7 +19,7 @@ join.smoothly <- function(x,x1,x2,f1,f2,f1prime,f2prime){
 }
 
 x <- seq(1,2,.01)
-plot(x,join.smoothly(x,0,1,-1,1))
+# plot(x,join.smoothly(x,0,1,-1,1))
 
 g.global <- function(a) a+1
 g.global.prime <- function(a) 1
@@ -39,7 +39,7 @@ g <- function(a, supp = c(-1,1), eps = .5, C=5){
   out
 }
 a <- seq(-2,2,length.out = 1000)
-plot(a,g(a,eps=.5),type="l",lwd=5)
+# plot(a,g(a,eps=.5),type="l",lwd=5)
 
 n <- 200
 beta <- 1
@@ -90,7 +90,6 @@ pXY <- ggplot() +
   theme(legend.position = "none",
         text = element_text(size=15),
         plot.title = element_text(size = 14, hjust=.5))
-pXY
 
 a.seq <- seq(-2,2,length.out = 1000)
 df.A <- data.frame(a = a.seq, g = g(a.seq))
@@ -121,17 +120,15 @@ pA <- ggplot(df.A, aes(a,g)) +
   theme(legend.position = "none",
         text = element_text(size=15),
         plot.title = element_text(size = 14, hjust=.5))
-pA
 
 all.A <- arrangeGrob(pA, pXY, ncol = 2,
                      top = textGrob("support-extending interventions on A", gp=gpar(fontsize=15)))
 
-grid.arrange(pA, pXY, ncol=2)
-
-pdf("../figures/impossibility_AtoX_nonlinear.pdf", width = 8, height = 3.5)
-grid.arrange(pA, pXY, ncol=2, top = "support-extending interventions on A")
-dev.off()
-
+# # grid.arrange(pA, pXY, ncol=2)
+#
+# pdf("../figures/impossibility_AtoX_nonlinear.pdf", width = 8, height = 3.5)
+# grid.arrange(pA, pXY, ncol=2, top = "support-extending interventions on A")
+# dev.off()
 
 
 
@@ -156,7 +153,7 @@ f <- function(a, supp = c(-1,1), eps = 1, C=c(-5,5)){
   out
 }
 x <- seq(-2,2,length.out = 1000)
-plot(x,f(x,eps=1),type="l",lwd=5)
+# plot(x,f(x,eps=1),type="l",lwd=5)
 
 n <- 200
 beta <- 1
@@ -218,6 +215,8 @@ pXY1 <- ggplot() +
         text = element_text(size=15),
         plot.title = element_text(size = 14, hjust=.5))
 
-pdf("../figures/impossibility_all.pdf", width = 12, height = 3.5)
 grid.arrange(pXY1, all.A,ncol=2, widths = c(1,2))
+
+## ---- private ----
+pdf("../figures/impossibility_all.pdf", width = 12, height = 3.5)
 dev.off()
