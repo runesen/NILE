@@ -16,8 +16,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r include = FALSE}
-knitr::read_chunk('../scripts/forvignettes/varying_instrument/varying_instrument1.R')
-knitr::read_chunk('../scripts/forvignettes/varying_instrument/plot.R')
+knitr::read_chunk('forvignettes/varying_instrument/varying_instrument1.R')
+knitr::read_chunk('forvignettes/varying_instrument/plot.R')
 ```
 
 ## Run simulations
