@@ -130,7 +130,7 @@
 #'    x.new <- seq(-2,2,length.out=100)
 #'    f.new <- fX(x=x.new,extrap=c(-.7,.7), beta=beta0)
 #'    plot(X,Y, pch=20)
-#'    lines(x.new,f.new,col="blue",lwd=3)
+#'    lines(x.new,f.new,col="#0072B2",lwd=3)
 #'
 #'    ## FIT!
 #'    fit <- NILE(Y, # response
