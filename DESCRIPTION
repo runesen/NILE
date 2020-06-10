@@ -24,5 +24,7 @@ Suggests:
     testthat,
     covr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    R.utils,
+    splines
 VignetteBuilder: knitr

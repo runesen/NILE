@@ -26,7 +26,7 @@ Once `NILE` is installed, you can export the code in this guide by typing `edit(
 
 ## Figure 1 - Impossibility plots
 ```{r, include = FALSE}
-knitr::read_chunk('distr_generalization/impossibility/impossibility_results.R')
+do.call(knitr::read_chunk, list(path = 'distr_generalization/impossibility/impossibility_results.R'))
 ```
 
 ```{r plot-impossibility, echo=TRUE, fig.width=12, fig.height=3.5, out.width="100%", fig.align='center'}
@@ -37,8 +37,8 @@ knitr::read_chunk('distr_generalization/impossibility/impossibility_results.R')
 
 ## Figure 2 - NILE vs. other methods
 ```{r, include = FALSE}
-knitr::read_chunk('distr_generalization/overlayed_estimates/overlay_estimates.R')
-knitr::read_chunk('distr_generalization/overlayed_estimates/plot.R')
+do.call(knitr::read_chunk, list(path = 'distr_generalization/overlayed_estimates/overlay_estimates.R'))
+do.call(knitr::read_chunk, list(path = 'distr_generalization/overlayed_estimates/plot.R'))
 ```
 
 ```{r overlay-estimates, echo=TRUE, eval=FALSE}
@@ -53,8 +53,8 @@ knitr::read_chunk('distr_generalization/overlayed_estimates/plot.R')
 
 ## Figure 3 - Varying confounding
 ```{r, include = FALSE}
-knitr::read_chunk('distr_generalization/varying_counfounding/varying_confounding1.R')
-knitr::read_chunk('distr_generalization/varying_counfounding/plot.R')
+do.call(knitr::read_chunk, list(path ='distr_generalization/varying_counfounding/varying_confounding1.R'))
+do.call(knitr::read_chunk, list(path ='distr_generalization/varying_counfounding/plot.R'))
 ```
 
 This experiment is computationally intensive, therefore it is advisable to run it in parallel. The number of simulations is 100, so one strategy is to run it in chunks of 10 simulations at a time. 
@@ -81,8 +81,8 @@ Once the results are saved as `.txt` files, you can produce the plots as follows
 
 ## Figure 4 - Varying instrument
 ```{r, include = FALSE}
-knitr::read_chunk('distr_generalization/varying_instrument/varying_instrument1.R')
-knitr::read_chunk('distr_generalization/varying_instrument/plot.R')
+do.call(knitr::read_chunk, list(path='distr_generalization/varying_instrument/varying_instrument1.R'))
+do.call(knitr::read_chunk, list(path='distr_generalization/varying_instrument/plot.R'))
 ```
 
 This experiment is computationally intensive, therefore it is advisable to run it in parallel. The number of simulations is 100, so one strategy is to run it in chunks of 10 simulations at a time. 
@@ -109,7 +109,7 @@ Once the results are saved as `.txt` files, you can produce the plots as follows
 
 ## Figure 5 - Sampling causal functions
 ```{r, include = FALSE}
-knitr::read_chunk('distr_generalization/sampling_causal_function/plot_sample_functions.R')
+do.call(knitr::read_chunk, list(path='distr_generalization/sampling_causal_function/plot_sample_functions.R'))
 ```
 
 ```{r plot-causal-funcs, echo=TRUE, fig.width=10, fig.height=5, out.width="100%", fig.align='center'}
@@ -120,8 +120,8 @@ knitr::read_chunk('distr_generalization/sampling_causal_function/plot_sample_fun
 
 ## Figure 6 - Varying curvature
 ```{r, include = FALSE}
-knitr::read_chunk('distr_generalization/varying_curvature/nz_curvature_strong1.R')
-knitr::read_chunk('distr_generalization/varying_curvature/plot.R')
+do.call(knitr::read_chunk, list(path='distr_generalization/varying_curvature/nz_curvature_strong1.R'))
+do.call(knitr::read_chunk, list(path='distr_generalization/varying_curvature/plot.R'))
 ```
 
 This experiment is computationally intensive, therefore it is advisable to run it in parallel. The number of simulations is 100, so one strategy is to run it in chunks of 10 simulations at a time. 
