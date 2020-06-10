@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r include = FALSE}
-knitr::read_chunk('./forvignettes/impossibility/impossibility_results.R')
+knitr::read_chunk('test.R')
 ```
 
 To produce the impossibility plots you type the following code.
