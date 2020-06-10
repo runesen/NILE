@@ -44,7 +44,7 @@ This is a basic example which shows you how to solve a common problem:
 ```{r example, echo=FALSE, results='hold', message=FALSE}
 library(NILE)
 ## basic example code
-source("code_for_analysis/example.R")
+source("scripts/example.R")
 
 ```
 
