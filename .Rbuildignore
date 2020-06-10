@@ -13,3 +13,6 @@
 ^Meta$
 ^scripts$
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
