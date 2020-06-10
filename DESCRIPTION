@@ -28,3 +28,5 @@ Suggests:
     R.utils,
     splines
 VignetteBuilder: knitr
+URL: https://github.com/runesen/NILE
+BugReports: https://github.com/runesen/NILE/issues
