@@ -6,6 +6,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib
+csl: apa.csl
 ---
 
 ```{r, include = FALSE}
