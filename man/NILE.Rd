@@ -62,7 +62,7 @@ and 2 (default) corresponds to a penalty on the second order derivative.
 }}
 
 \item{par.a}{a list of different parameters determining the B-spline regression
-of the residuals \eqn{Y - B(X)\beta} onto the residuals A- !!!
+of the residuals \eqn{Y - B(X)\beta} onto the residuals \eqn{A- ???} !!!
 \itemize{
 \item \code{breaks} same as above
 \item \code{num.breaks} same as above
@@ -80,24 +80,28 @@ of the residuals \eqn{Y - B(X)\beta} onto the residuals A- !!!
 \value{
 An object of class AR, containing the following elements
 \itemize{
-\item \code{coefficients} estimated splines coefficients for the relationship X -> Y
+\item \code{coefficients} estimated splines coefficients for the relationship \eqn{X\to Y}{X -> Y}
 \item \code{residuals} prediction residuals
 \item \code{fitted.values} fitted values
 \item \code{betaA} estimated spline coefficients for the regression of the prediction
-residuals onto the variable A
+residuals onto the variable \eqn{A}
 \item \code{fitA} fitted values for the regression of the prediction
-residuals onto the variable A
+residuals onto the variable \eqn{A}
 \item \code{Y} the response variable
 \item \code{BX} basis object holding all relevant information about the B-spline
-basis used for the regression X -> Y
+basis used for the regression \eqn{X\to Y}{X -> Y}
 \item \code{BA} basis object holding all relevant information about the B-spline
 basis used for the regression of the residuals onto A
 \item \code{ols} OLS loss at the estimated parameters
 \item \code{iv} TSLS loss at the estimated parameters
-\item \code{ar} NILE loss at the estimated parameters, that is, OLS + lambda.star*TSLS
+\item \code{ar} NILE loss at the estimated parameters, that is,
+\eqn{OLS(\theta) + \texttt{lambda.star}\times TSLS(\theta)}{OLS +
+lambda.star * TSLS}
 \item \code{intercept} was an intercept supplied?
-\item \code{lambdaX} penalty parameter used for the spline regression X -> Y
-\item \code{lambdaA} penalty parameter used for the regression of residuals onto A
+\item \code{lambdaX} penalty parameter used for the spline regression
+\eqn{X\to Y}{X -> Y}
+\item \code{lambdaA} penalty parameter used for the regression of residuals
+onto \eqn{A}
 \item \code{lambda.star} the (estimated) value for lambda.star
 \item \code{pred} predicted values at the supplied vector x.new
 }
@@ -121,14 +125,14 @@ values for \eqn{Y} under confounding-removing interventions on \eqn{X}) even for
 On a more technical side, the NILE estimator proceeds as follows. First, two B-splines
 \eqn{B = (B_1,...,B_{df})}{B = (B_1,...,B_df)} and \eqn{C = (C_1, ..., C_{df})}{C = (C_1, ..., C_df)}
 are constructed, which span the values of \eqn{X} and \eqn{A}, respectively.
-These give rise to the loss functions OLS(\eqn{theta}), which
+These give rise to the loss functions OLS(\eqn{\theta}), which
 corresponds to the MSE for the prediction residuals \eqn{Y - \theta^T B}, and
 TSLS(\eqn{\theta}),
 which are the fitted values of the spline-regression of the residuals
 \eqn{Y - \theta^T B}
 onto the spline basis \eqn{C}. The NILE estimator the estimates \eqn{\theta}
 by minimizing the objective function
-\deqn{OLS(\theta) + \texttt{lambda.star}  TSLS(\theta) + PEN(\theta),}{
+\deqn{OLS(\theta) + \texttt{lambda.star}\times TSLS(\theta) + PEN(\theta),}{
 OLS(\theta) + lambda.star * TSLS(\theta) + PEN(\theta),}
 where PEN(\eqn{\theta}) is a quadratic penalty term which enforces smoothness.
 
@@ -159,7 +163,7 @@ product moment with all basis functions \eqn{C_1(A), \dots C_{df}(A)}{C_1(A), ..
    x.new <- seq(-2,2,length.out=100)
    f.new <- fX(x=x.new,extrap=c(-.7,.7), beta=beta0)
    plot(X,Y, pch=20)
-   lines(x.new,f.new,col="blue",lwd=3)
+   lines(x.new,f.new,col="#0072B2",lwd=3)
 
    ## FIT!
    fit <- NILE(Y, # response
@@ -197,7 +201,7 @@ product moment with all basis functions \eqn{C_1(A), \dots C_{df}(A)}{C_1(A), ..
 
 }
 \references{
-(include arxiv link when done)
+\insertRef{rune2020}{NILE}
 }
 \author{
 Rune Christiansen \email{krunechristiansen@math.ku.dk}
