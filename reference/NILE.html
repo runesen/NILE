@@ -12,8 +12,8 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
@@ -218,7 +218,7 @@ and 2 (default) corresponds to a penalty on the second order derivative.</p></li
     <tr>
       <th>par.a</th>
       <td><p>a list of different parameters determining the B-spline regression
-of the residuals \(Y - B(X)\beta\) onto the residuals A- !!!</p><ul>
+of the residuals \(Y - B(X)\beta\) onto the residuals \(A- ???\) !!!</p><ul>
 <li><p><code>breaks</code> same as above</p></li>
 <li><p><code>num.breaks</code> same as above</p></li>
 <li><p><code>n.order</code> same as above</p></li>
@@ -238,24 +238,27 @@ of the residuals \(Y - B(X)\beta\) onto the residuals A- !!!</p><ul>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class AR, containing the following elements</p><ul>
-<li><p><code>coefficients</code> estimated splines coefficients for the relationship X -&gt; Y</p></li>
+<li><p><code>coefficients</code> estimated splines coefficients for the relationship \(X\to Y\)</p></li>
 <li><p><code>residuals</code> prediction residuals</p></li>
 <li><p><code>fitted.values</code> fitted values</p></li>
 <li><p><code>betaA</code> estimated spline coefficients for the regression of the prediction
-residuals onto the variable A</p></li>
+residuals onto the variable \(A\)</p></li>
 <li><p><code>fitA</code> fitted values for the regression of the prediction
-residuals onto the variable A</p></li>
+residuals onto the variable \(A\)</p></li>
 <li><p><code>Y</code> the response variable</p></li>
 <li><p><code>BX</code> basis object holding all relevant information about the B-spline
-basis used for the regression X -&gt; Y</p></li>
+basis used for the regression \(X\to Y\)</p></li>
 <li><p><code>BA</code> basis object holding all relevant information about the B-spline
 basis used for the regression of the residuals onto A</p></li>
 <li><p><code>ols</code> OLS loss at the estimated parameters</p></li>
 <li><p><code>iv</code> TSLS loss at the estimated parameters</p></li>
-<li><p><code>ar</code> NILE loss at the estimated parameters, that is, OLS + lambda.star*TSLS</p></li>
+<li><p><code>ar</code> NILE loss at the estimated parameters, that is,
+\(OLS(\theta) + \texttt{lambda.star}\times TSLS(\theta)\)</p></li>
 <li><p><code>intercept</code> was an intercept supplied?</p></li>
-<li><p><code>lambdaX</code> penalty parameter used for the spline regression X -&gt; Y</p></li>
-<li><p><code>lambdaA</code> penalty parameter used for the regression of residuals onto A</p></li>
+<li><p><code>lambdaX</code> penalty parameter used for the spline regression
+\(X\to Y\)</p></li>
+<li><p><code>lambdaA</code> penalty parameter used for the regression of residuals
+onto \(A\)</p></li>
 <li><p><code>lambda.star</code> the (estimated) value for lambda.star</p></li>
 <li><p><code>pred</code> predicted values at the supplied vector x.new</p></li>
 </ul>
@@ -274,21 +277,21 @@ values for \(Y\) under confounding-removing interventions on \(X\)) even for val
 <p>On a more technical side, the NILE estimator proceeds as follows. First, two B-splines
 \(B = (B_1,...,B_{df})\) and \(C = (C_1, ..., C_{df})\)
 are constructed, which span the values of \(X\) and \(A\), respectively.
-These give rise to the loss functions OLS(\(theta\)), which
+These give rise to the loss functions OLS(\(\theta\)), which
 corresponds to the MSE for the prediction residuals \(Y - \theta^T B\), and
 TSLS(\(\theta\)),
 which are the fitted values of the spline-regression of the residuals
 \(Y - \theta^T B\)
 onto the spline basis \(C\). The NILE estimator the estimates \(\theta\)
 by minimizing the objective function
-$$OLS(\theta) + \texttt{lambda.star}  TSLS(\theta) + PEN(\theta),$$
+$$OLS(\theta) + \texttt{lambda.star}\times TSLS(\theta) + PEN(\theta),$$
 where PEN(\(\theta\)) is a quadratic penalty term which enforces smoothness.</p>
 <p>The parameter <code>lambda.star</code> is chosen as the largest positive value for which the
 corresponding solution yields prediction residuals which pass a test for vanishing
 product moment with all basis functions \(C_1(A), \dots C_{df}(A)\).</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>(include arxiv link when done)</p>
+    <p>rune2020NILE</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Rune Christiansen <a href='mailto:krunechristiansen@math.ku.dk'>krunechristiansen@math.ku.dk</a></p>
@@ -315,7 +318,7 @@ product moment with all basis functions \(C_1(A), \dots C_{df}(A)\).</p>
 
    <span class='no'>x.new</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(-<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='kw'>length.out</span><span class='kw'>=</span><span class='fl'>100</span>)
    <span class='no'>f.new</span> <span class='kw'>&lt;-</span> <span class='fu'>fX</span>(<span class='kw'>x</span><span class='kw'>=</span><span class='no'>x.new</span>,<span class='kw'>extrap</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>.7</span>,<span class='fl'>.7</span>), <span class='kw'>beta</span><span class='kw'>=</span><span class='no'>beta0</span>)
-   <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>X</span>,<span class='no'>Y</span>, <span class='kw'>pch</span><span class='kw'>=</span><span class='fl'>20</span>)</div><div class='input'>   <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>x.new</span>,<span class='no'>f.new</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"blue"</span>,<span class='kw'>lwd</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='img'><img src='NILE-1.png' alt='' width='700' height='433' /></div><div class='input'>
+   <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>X</span>,<span class='no'>Y</span>, <span class='kw'>pch</span><span class='kw'>=</span><span class='fl'>20</span>)</div><div class='input'>   <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>x.new</span>,<span class='no'>f.new</span>,<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"#0072B2"</span>,<span class='kw'>lwd</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='img'><img src='NILE-1.png' alt='' width='700' height='433' /></div><div class='input'>
    <span class='co'>## FIT!</span>
    <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>NILE</span>(<span class='no'>Y</span>, <span class='co'># response</span>
                <span class='no'>X</span>, <span class='co'># predictors (so far, only 1-dim supported)</span>
