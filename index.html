@@ -105,7 +105,7 @@
 <p>This is a basic example which shows the idea behind NILE. Let us start by importing the <code>NILE</code> library.</p>
 <div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">NILE</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">splines</span>)</pre></div>
-<p>Suppose that the true (uknown) functional relationship between <em>X</em> and <em>Y</em> is defined by a spline that linearly extrapolates outside the training data.</p>
+<p>Suppose that the true (unknown) functional relationship between <em>X</em> and <em>Y</em> is defined by a spline that linearly extrapolates outside the training data.</p>
 <div class="sourceCode" id="cb3"><pre class="r"><span class="co"># true (unknown) functional relationship X -&gt; Y</span>
 <span class="co"># (linearly extrapolating beyond "extrap")</span>
 <span class="no">fX</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">extrap</span>, <span class="no">beta</span>){
