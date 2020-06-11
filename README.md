@@ -32,7 +32,7 @@ library(NILE)
 library(splines)
 ```
 
-Suppose that the true (uknown) functional relationship between *X* and *Y* is defined by a spline that linearly extrapolates outside the training data.
+Suppose that the true (unknown) functional relationship between *X* and *Y* is defined by a spline that linearly extrapolates outside the training data.
 
 ``` r
 # true (unknown) functional relationship X -> Y
