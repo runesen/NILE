@@ -6,7 +6,7 @@ NILE
 <!-- badges: start -->
 [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Travis build status](https://travis-ci.org/runesen/NILE.svg?branch=master)](https://travis-ci.org/runesen/NILE) [![Codecov test coverage](https://codecov.io/gh/runesen/NILE/branch/master/graph/badge.svg)](https://codecov.io/gh/runesen/NILE?branch=master) [![R build status](https://github.com/runesen/NILE/workflows/R-CMD-check/badge.svg)](https://github.com/runesen/NILE/actions) <!-- badges: end -->
 
-The goal of NILE is to ...
+The goal of `NILE` is to provide an implementation of the statistical estimator proposed by Christiansen et al. (2020). NILE is an estimator applicable in a nonlinear instrumental variables (IV) setting and achieves distribution generalization with linear extensions. For further details refer to the paper Christiansen et al. (2020 <https://arxiv.org/abs/20>??.?????).
 
 Installation
 ------------
@@ -109,3 +109,8 @@ fit <- NILE(Y, # response
 ```
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;" />
+
+References
+----------
+
+Christiansen, R., Pfister, N., Jakobsen, M. E., Gnecco, N., & Peters, J. (2020). *The difficult task of distribution generalization in nonlinear models*.

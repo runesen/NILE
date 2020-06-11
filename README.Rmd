@@ -1,5 +1,7 @@
 ---
 output: github_document
+bibliography: inst/REFERENCES.bib
+csl: inst/apa.csl
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -21,7 +23,10 @@ knitr::opts_chunk$set(
 [![R build status](https://github.com/runesen/NILE/workflows/R-CMD-check/badge.svg)](https://github.com/runesen/NILE/actions)
 <!-- badges: end -->
 
-The goal of NILE is to ...
+The goal of `NILE` is to provide an implementation of the statistical estimator proposed by @rune2020.
+NILE is an estimator applicable in a nonlinear
+instrumental variables (IV) setting and achieves distribution generalization
+with linear extensions. For further details refer to the paper @rune2020 [https://arxiv.org/abs/20??.?????].
 
 ## Installation
 
@@ -120,4 +125,6 @@ fit <- NILE(Y, # response
                          n.order=4 # same as above
                          ))
 ```
+
+## References
 
