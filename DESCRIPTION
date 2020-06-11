@@ -8,7 +8,7 @@ Authors@R:
     role = c("aut", "cre")),
     person("Niklas", "Pfister", role = "aut"),
     person("Martin Emil", "Jakobsen", role = "aut"),
-    person("Nicola", "Gnecco", role = "aut", "cre"),
+    person("Nicola", "Gnecco", role = c("aut", "cre")),
     person("Jonas", "Peters", role = "aut"))
 Author:
     Rune Christiansen [aut, cre],
