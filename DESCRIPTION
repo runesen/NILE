@@ -8,13 +8,13 @@ Authors@R:
     role = c("aut", "cre")),
     person("Niklas", "Pfister", role = "aut"),
     person("Martin Emil", "Jakobsen", role = "aut"),
-    person("Nicola", "Gnecco", role = "aut"),
+    person("Nicola", "Gnecco", role = c("aut", "cre")),
     person("Jonas", "Peters", role = "aut"))
 Author:
     Rune Christiansen [aut, cre],
     Niklas Pfister [aut],
     Martin Emil Jakobsen [aut],
-    Nicola Gnecco [aut],
+    Nicola Gnecco [aut, cre],
     Jonas Peters [aut]
 Description: NILE is an estimator applicable in a nonlinear
     instrumental variables (IV) setting and achieves distribution generalization
