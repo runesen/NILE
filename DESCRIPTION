@@ -26,7 +26,9 @@ Suggests:
     knitr,
     rmarkdown,
     R.utils,
-    splines
+    splines,
+    Rdpack
+RdMacros: Rdpack
 VignetteBuilder: knitr
 URL: https://github.com/runesen/NILE
 BugReports: https://github.com/runesen/NILE/issues
