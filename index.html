@@ -87,7 +87,7 @@
 <a href="#nile" class="anchor"></a>NILE</h1></div>
 <!-- badges: start -->
 
-<p>The goal of <code>NILE</code> is to provide an implementation of the statistical estimator proposed by Christiansen et al. (2020). NILE is an estimator applicable in a nonlinear instrumental variables (IV) setting and achieves distribution generalization with linear extensions. For further details refer to the paper Christiansen et al. (2020 <a href="https://arxiv.org/abs/20" class="uri">https://arxiv.org/abs/20</a>??.?????).</p>
+<p>The <code>NILE</code> estimator can be used to estimate a nonlinear causal influence of a single predictor <span class="math inline"><em>X</em></span> on a real-valued response <span class="math inline"><em>Y</em></span>. It exploits an instrumental variable (IV) setting with a single exogenous variable <span class="math inline"><em>A</em></span> which serves as instrument. Predictions obtained from the NILE estimator are causal predictions in the sense that they predict the values of <span class="math inline"><em>Y</em></span> under interventions which break the dependence between <span class="math inline"><em>X</em></span> and possible confounders of <span class="math inline">(<em>X</em>, <em>Y</em>)</span>. For further details refer to the paper Christiansen et al. (2020 <a href="https://arxiv.org/abs/20" class="uri">https://arxiv.org/abs/20</a>??.?????).</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -105,7 +105,7 @@
 <p>This is a basic example which shows the idea behind NILE. Let us start by importing the <code>NILE</code> library.</p>
 <div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">NILE</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">splines</span>)</pre></div>
-<p>Suppose that the true (unknown) functional relationship between <em>X</em> and <em>Y</em> is defined by a spline that linearly extrapolates outside the training data.</p>
+<p>Suppose that the true (unknown) functional relationship between <span class="math inline"><em>X</em></span> and <span class="math inline"><em>Y</em></span> is defined by a spline that linearly extrapolates outside the training data.</p>
 <div class="sourceCode" id="cb3"><pre class="r"><span class="co"># true (unknown) functional relationship X -&gt; Y</span>
 <span class="co"># (linearly extrapolating beyond "extrap")</span>
 <span class="no">fX</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">extrap</span>, <span class="no">beta</span>){
@@ -165,15 +165,19 @@
                          <span class="kw">num.breaks</span><span class="kw">=</span><span class="fl">4</span>, <span class="co"># same as above</span>
                          <span class="kw">n.order</span><span class="kw">=</span><span class="fl">4</span> <span class="co"># same as above</span>
                          ))
-<span class="co">#&gt; [1] "lambda.cv.a =  1.42932324587573"</span>
-<span class="co">#&gt; [1] "lambda.cv.x =  0.0015933292003293"</span>
+<span class="co">#&gt; [1] "lambda.cv.a =  1.4293232458819"</span>
+<span class="co">#&gt; [1] "lambda.cv.x =  0.00159332920036247"</span>
 <span class="co">#&gt; [1] "lambda.star.p.uncorr =  1.45538091659546"</span></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
+<div id="refs" class="references">
+<div id="ref-rune2020">
 <p>Christiansen, R., Pfister, N., Jakobsen, M. E., Gnecco, N., &amp; Peters, J. (2020). <em>The difficult task of distribution generalization in nonlinear models</em>.</p>
+</div>
+</div>
 </div>
 </div>
   </div>
