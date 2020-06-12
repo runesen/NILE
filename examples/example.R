@@ -60,3 +60,5 @@ fit <- NILE(Y, # response
                          num.breaks=4, # same as above
                          n.order=4 # same as above
                          ))
+
+str(fit)
