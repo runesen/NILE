@@ -1,0 +1,48 @@
+Package: NILE
+Title: Distribution generalization with linear extrapolation within IV setting
+Version: 0.0.0.9000
+Maintainer: Rune Christiansen <krunechristiansen@math.ku.dk>
+Authors@R: 
+    c(
+    person("Rune", "Christiansen", email = "krunechristiansen@math.ku.dk", 
+    role = c("aut", "cre")),
+    person("Niklas", "Pfister", role = "aut"),
+    person("Martin Emil", "Jakobsen", role = "aut"),
+    person("Nicola", "Gnecco", role = c("aut", "cre")),
+    person("Jonas", "Peters", role = "aut"))
+Author:
+    Rune Christiansen [aut, cre],
+    Niklas Pfister [aut],
+    Martin Emil Jakobsen [aut],
+    Nicola Gnecco [aut, cre],
+    Jonas Peters [aut]
+Description: NILE is an estimator applicable in a nonlinear
+    instrumental variables (IV) setting and achieves distribution generalization
+    with linear extensions. For further details refer to the paper 'The difficult 
+    task of distribution generalization in nonlinear models' by Christiansen et al.
+    (2020) <arXiv:20??.?????>. 
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+Imports: 
+    MASS,
+    fda,
+    cvTools,
+    ggplot2,
+    expm,
+    gridExtra,
+    stats
+Suggests: 
+    testthat,
+    covr,
+    knitr,
+    rmarkdown,
+    R.utils,
+    splines,
+    Rdpack
+RdMacros: Rdpack
+VignetteBuilder: knitr
+URL: https://github.com/runesen/NILE
+BugReports: https://github.com/runesen/NILE/issues

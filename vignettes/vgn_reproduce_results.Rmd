@@ -1,0 +1,153 @@
+---
+title: "Reproduce paper results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reproduce paper results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa.csl
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+## Overview
+This vignette will guide you through reproducing the numerical simulations and figures of @rune2020.
+Each section is devoted to reproducing each image or simulation.
+Once `NILE` is installed, you can export the code in this guide by typing `edit(vignette("vgn_reproduce_results"))`.
+
+
+
+## Figure 1 - Impossibility plots
+```{r, include = FALSE}
+do.call(knitr::read_chunk, list(path = 'distr_generalization/impossibility/impossibility_results.R'))
+```
+
+```{r plot-impossibility, echo=TRUE, fig.width=12, fig.height=3.5, out.width="100%", fig.align='center'}
+
+```
+
+
+
+## Figure 2 - NILE vs. other methods
+```{r, include = FALSE}
+do.call(knitr::read_chunk, list(path = 'distr_generalization/overlayed_estimates/overlay_estimates.R'))
+do.call(knitr::read_chunk, list(path = 'distr_generalization/overlayed_estimates/plot.R'))
+```
+
+```{r overlay-estimates, echo=TRUE, eval=FALSE}
+
+```
+
+```{r plot-overlay-estimates, echo=TRUE, eval=FALSE}
+
+```
+
+
+
+## Figure 3 - Varying confounding
+```{r, include = FALSE}
+do.call(knitr::read_chunk, list(path ='distr_generalization/varying_counfounding/varying_confounding1.R'))
+do.call(knitr::read_chunk, list(path ='distr_generalization/varying_counfounding/plot.R'))
+```
+
+This experiment is computationally intensive, therefore it is advisable to run it in parallel. The number of simulations is 100, so one strategy is to run it in chunks of 10 simulations at a time. 
+
+For example, the first chunk of simulations can be run as follows.
+
+```{r,}
+SIM <- 1:10
+
+```
+
+
+```{r varying-conf, echo=TRUE, eval=FALSE}
+
+```
+
+Once the results are saved as `.txt` files, you can produce the plots as follows.
+
+```{r plot-varying-conf, echo=TRUE, eval=FALSE}
+
+```
+
+
+
+## Figure 4 - Varying instrument
+```{r, include = FALSE}
+do.call(knitr::read_chunk, list(path='distr_generalization/varying_instrument/varying_instrument1.R'))
+do.call(knitr::read_chunk, list(path='distr_generalization/varying_instrument/plot.R'))
+```
+
+This experiment is computationally intensive, therefore it is advisable to run it in parallel. The number of simulations is 100, so one strategy is to run it in chunks of 10 simulations at a time. 
+
+For example, the first chunk of simulations can be run as follows.
+
+```{r,}
+SIM <- 1:10
+
+```
+
+
+```{r varying-inst, echo=TRUE, eval=FALSE}
+
+```
+
+Once the results are saved as `.txt` files, you can produce the plots as follows.
+
+```{r plot-varying-inst, echo=TRUE, eval=FALSE}
+
+```
+
+
+
+## Figure 5 - Sampling causal functions
+```{r, include = FALSE}
+do.call(knitr::read_chunk, list(path='distr_generalization/sampling_causal_function/plot_sample_functions.R'))
+```
+
+```{r plot-causal-funcs, echo=TRUE, fig.width=10, fig.height=5, out.width="100%", fig.align='center'}
+
+```
+
+
+
+## Figure 6 - Varying curvature
+```{r, include = FALSE}
+do.call(knitr::read_chunk, list(path='distr_generalization/varying_curvature/nz_curvature_strong1.R'))
+do.call(knitr::read_chunk, list(path='distr_generalization/varying_curvature/plot.R'))
+```
+
+This experiment is computationally intensive, therefore it is advisable to run it in parallel. The number of simulations is 100, so one strategy is to run it in chunks of 10 simulations at a time. 
+
+For example, the first chunk of simulations can be run as follows.
+
+```{r,}
+SIM <- 1:10
+
+```
+
+
+```{r varying-curv, echo=TRUE, eval=FALSE}
+
+```
+
+Once the results are saved as `.txt` files, you can produce the plots as follows.
+
+```{r plot-varying-curv, echo=TRUE, eval=FALSE}
+
+```
+
+
+
+## References
+
+
+
