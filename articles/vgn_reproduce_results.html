@@ -1231,7 +1231,7 @@
                     <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span>(<span class="st">"nz_curvature_strong81.txt"</span>, <span class="kw">header</span> <span class="kw">=</span> <span class="fl">TRUE</span>),
                     <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span>(<span class="st">"nz_curvature_strong91.txt"</span>, <span class="kw">header</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
 
-
+<span class="no">pred.frame</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">pred.frame</span>, <span class="no">method</span> <span class="kw">!=</span> <span class="st">"IV"</span>)
 <span class="no">n</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">pred.frame</span>)
 <span class="no">n.x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">pred.frame</span>$<span class="no">x</span>))
 <span class="no">n.m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">pred.frame</span>$<span class="no">method</span>))
