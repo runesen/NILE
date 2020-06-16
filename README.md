@@ -46,7 +46,7 @@ fX <- function(x, extrap, beta){
 }
 ```
 
-Let us generate the data generating process.
+Let us define the data generating model.
 
 ``` r
 # data generating model

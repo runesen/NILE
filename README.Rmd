@@ -70,7 +70,7 @@ fX <- function(x, extrap, beta){
 
 ```
 
-Let us generate the data generating process.
+Let us define the data generating model.
 ```{r, fig.width=10, fig.height=5, out.width="100%"}
 # data generating model
 n <- 200
