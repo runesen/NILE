@@ -16,7 +16,7 @@ pred.frame <- rbind(read.table("nz_curvature_strong1.txt", header = TRUE),
                     read.table("nz_curvature_strong81.txt", header = TRUE),
                     read.table("nz_curvature_strong91.txt", header = TRUE))
 
-
+pred.frame <- subset(pred.frame, method != "IV")
 n <- nrow(pred.frame)
 n.x <- length(unique(pred.frame$x))
 n.m <- length(unique(pred.frame$method))
