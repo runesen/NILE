@@ -1,60 +1,38 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# NILE
+NILE
+====
 
 <!-- badges: start -->
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing) [![Travis build status](https://travis-ci.org/runesen/NILE.svg?branch=master)](https://travis-ci.org/runesen/NILE) [![Codecov test coverage](https://codecov.io/gh/runesen/NILE/branch/master/graph/badge.svg)](https://codecov.io/gh/runesen/NILE?branch=master) [![R build status](https://github.com/runesen/NILE/workflows/R-CMD-check/badge.svg)](https://github.com/runesen/NILE/actions) <!-- badges: end -->
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![Travis build
-status](https://travis-ci.org/runesen/NILE.svg?branch=master)](https://travis-ci.org/runesen/NILE)
-[![Codecov test
-coverage](https://codecov.io/gh/runesen/NILE/branch/master/graph/badge.svg)](https://codecov.io/gh/runesen/NILE?branch=master)
-[![R build
-status](https://github.com/runesen/NILE/workflows/R-CMD-check/badge.svg)](https://github.com/runesen/NILE/actions)
-<!-- badges: end -->
+The `NILE` estimator can be used to estimate a nonlinear causal influence of a single predictor *X* on a real-valued response *Y*. It exploits an instrumental variable (IV) setting with a single exogenous variable *A* which serves as instrument. Predictions obtained from the NILE estimator are causal predictions in the sense that they predict the values of *Y* under interventions which break the dependence between *X* and possible confounders of (*X*, *Y*). For further details refer to the paper Christiansen et al. (2020 <https://arxiv.org/abs/2006.07433>).
 
-The `NILE` estimator can be used to estimate a nonlinear causal
-influence of a single predictor \(X\) on a real-valued response \(Y\).
-It exploits an instrumental variable (IV) setting with a single
-exogenous variable \(A\) which serves as instrument. Predictions
-obtained from the NILE estimator are causal predictions in the sense
-that they predict the values of \(Y\) under interventions which break
-the dependence between \(X\) and possible confounders of \((X,Y)\). For
-further details refer to the paper Christiansen et al. (2020
-<https://arxiv.org/abs/20>??.?????).
-
-## Installation
+Installation
+------------
 
 <!-- You can install the released version of NILE from [CRAN](https://CRAN.R-project.org) with: -->
-
 <!-- ``` r -->
-
 <!-- install.packages("NILE") -->
-
 <!-- ``` -->
-
-You can install the the development version from
-[GitHub](https://github.com/) with:
+You can install the the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("runesen/NILE")
 ```
 
-## Example
+Example
+-------
 
-This is a basic example which shows the idea behind NILE. Let us start
-by importing the `NILE` library.
+This is a basic example which shows the idea behind NILE. Let us start by importing the `NILE` library.
 
 ``` r
 library(NILE)
 library(splines)
 ```
 
-Suppose that the true (unknown) functional relationship between \(X\)
-and \(Y\) is defined by a spline that linearly extrapolates outside the
-training data.
+Suppose that the true (unknown) functional relationship between *X* and *Y* is defined by a spline that linearly extrapolates outside the training data.
 
 ``` r
 # true (unknown) functional relationship X -> Y
@@ -68,7 +46,7 @@ fX <- function(x, extrap, beta){
 }
 ```
 
-Let us generate the data with the model …
+Let us generate the data generating process.
 
 ``` r
 # data generating model
@@ -125,23 +103,14 @@ fit <- NILE(Y, # response
                          num.breaks=4, # same as above
                          n.order=4 # same as above
                          ))
-#> [1] "lambda.cv.a =  1.4293232458819"
-#> [1] "lambda.cv.x =  0.00159332920036247"
+#> [1] "lambda.cv.a =  1.42932324587573"
+#> [1] "lambda.cv.x =  0.0015933292003293"
 #> [1] "lambda.star.p.uncorr =  1.45538091659546"
 ```
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;" />
 
-## References
+References
+----------
 
-<div id="refs" class="references">
-
-<div id="ref-rune2020">
-
-Christiansen, R., Pfister, N., Jakobsen, M. E., Gnecco, N., & Peters, J.
-(2020). *The difficult task of distribution generalization in nonlinear
-models*.
-
-</div>
-
-</div>
+Christiansen, R., Pfister, N., Jakobsen, M. E., Gnecco, N., & Peters, J. (2020). *The difficult task of distribution generalization in nonlinear models*.

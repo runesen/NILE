@@ -20,7 +20,7 @@ Description: NILE is an estimator applicable in a nonlinear
     instrumental variables (IV) setting and achieves distribution generalization
     with linear extensions. For further details refer to the paper 'The difficult 
     task of distribution generalization in nonlinear models' by Christiansen et al.
-    (2020) <arXiv:20??.?????>. 
+    (2020) <arXiv:2006.07433>. 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

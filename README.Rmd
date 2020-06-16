@@ -27,7 +27,7 @@ The `NILE` estimator can be used to estimate a nonlinear causal influence of a s
 It exploits an instrumental variable (IV) setting with a single exogenous variable $A$ which serves as instrument. 
 Predictions obtained from the NILE estimator are causal predictions in the sense that they predict the values 
 of $Y$ under interventions which break the dependence between $X$ and possible confounders of $(X,Y)$. 
-For further details refer to the paper @rune2020 [https://arxiv.org/abs/20??.?????].
+For further details refer to the paper @rune2020 [https://arxiv.org/abs/2006.07433].
 
 ## Installation
 
@@ -70,7 +70,7 @@ fX <- function(x, extrap, beta){
 
 ```
 
-Let us generate the data with the model ...
+Let us generate the data generating process.
 ```{r, fig.width=10, fig.height=5, out.width="100%"}
 # data generating model
 n <- 200
