@@ -23,6 +23,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -42,12 +44,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -66,7 +62,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/runesen/NILE/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -87,7 +83,7 @@
 <a href="#nile" class="anchor"></a>NILE</h1></div>
 <!-- badges: start -->
 
-<p>The <code>NILE</code> estimator can be used to estimate a nonlinear causal influence of a single predictor <em>X</em> on a real-valued response <em>Y</em>. It exploits an instrumental variable (IV) setting with a single exogenous variable <em>A</em> which serves as instrument. Predictions obtained from the NILE estimator are causal predictions in the sense that they predict the values of <em>Y</em> under interventions which break the dependence between <em>X</em> and possible confounders of (<em>X</em>, <em>Y</em>). For further details refer to the paper Christiansen et al. (2020 <a href="https://arxiv.org/abs/2006.07433" class="uri">https://arxiv.org/abs/2006.07433</a>).</p>
+<p>The <code>NILE</code> estimator can be used to estimate a nonlinear causal influence of a single predictor <em>X</em> on a real-valued response <em>Y</em>. It exploits an instrumental variable (IV) setting with a single exogenous variable <em>A</em> which serves as instrument. Predictions obtained from the NILE estimator are causal predictions in the sense that they predict the values of <em>Y</em> under interventions which break the dependence between <em>X</em> and possible confounders of (<em>X</em>, <em>Y</em>). For further details refer to the paper Christiansen et al. (2020 <a href="https://arxiv.org/abs/2006.07433" class="external-link uri">https://arxiv.org/abs/2006.07433</a>).</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -95,89 +91,84 @@
 <!-- ``` r -->
 <!-- install.packages("NILE") -->
 <!-- ``` -->
-<p>You can install the the development version from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co"># install.packages("devtools")</span>
-<span class="kw">devtools</span>::<span class="fu">install_github</span>(<span class="st">"runesen/NILE"</span>)
-</pre></div>
+<p>You can install the the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"runesen/NILE"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>This is a basic example which shows the idea behind NILE. Let us start by importing the <code>NILE</code> library.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/runesen/NILE">NILE</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">splines</span>)
-</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/runesen/NILE" class="external-link">NILE</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">splines</span><span class="op">)</span></code></pre></div>
 <p>Suppose that the true (unknown) functional relationship between <em>X</em> and <em>Y</em> is defined by a spline that linearly extrapolates outside the training data.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="co"># true (unknown) functional relationship X -&gt; Y</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># true (unknown) functional relationship X -&gt; Y</span>
 <span class="co"># (linearly extrapolating beyond "extrap")</span>
-<span class="kw">fX</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">extrap</span>, <span class="kw">beta</span>){
-  <span class="kw">bx</span> <span class="op">&lt;-</span> <span class="kw">splines</span>::<span class="fu"><a href="https://rdrr.io/r/splines/ns.html">ns</a></span>(<span class="kw">x</span>, knots = <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(from=<span class="kw">extrap</span>[<span class="fl">1</span>], to=<span class="kw">extrap</span>[<span class="fl">2</span>],
-                                   length.out=(<span class="kw">n.splines.true</span><span class="op">+</span><span class="fl">1</span>))[
-                                     <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="kw">n.splines.true</span><span class="op">+</span><span class="fl">1</span>)],
-                    Boundary.knots = <span class="kw">extrap</span>)
-  <span class="kw">bx</span><span class="op">%*%</span><span class="kw">beta</span>
-}
-</pre></div>
+<span class="va">fX</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">extrap</span>, <span class="va">beta</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">bx</span> <span class="op">&lt;-</span> <span class="fu">splines</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">x</span>, knots <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from<span class="op">=</span><span class="va">extrap</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, to<span class="op">=</span><span class="va">extrap</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,
+                                   length.out<span class="op">=</span><span class="op">(</span><span class="va">n.splines.true</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>
+                                     <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n.splines.true</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span>,
+                    Boundary.knots <span class="op">=</span> <span class="va">extrap</span><span class="op">)</span>
+  <span class="va">bx</span><span class="op">%*%</span><span class="va">beta</span>
+<span class="op">}</span></code></pre></div>
 <p>Let us define the data generating model.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="co"># data generating model</span>
-<span class="kw">n</span> <span class="op">&lt;-</span> <span class="fl">200</span>
-<span class="kw">n.splines.true</span> <span class="op">&lt;-</span> <span class="fl">4</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">2</span>)
-<span class="kw">beta0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="kw">n.splines.true</span>, <span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>)
-<span class="kw">alphaA</span> <span class="op">&lt;-</span> <span class="kw">alphaEps</span> <span class="op">&lt;-</span> <span class="kw">alphaH</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(<span class="fl">3</span>)
-<span class="kw">A</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="kw">n</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>)
-<span class="kw">H</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="kw">n</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>)
-<span class="kw">X</span> <span class="op">&lt;-</span> <span class="kw">alphaA</span><span class="op">*</span><span class="kw">A</span> <span class="op">+</span> <span class="kw">alphaH</span><span class="op">*</span><span class="kw">H</span> <span class="op">+</span> <span class="kw">alphaEps</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="kw">n</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>)
-<span class="kw">Y</span> <span class="op">&lt;-</span> <span class="fu">fX</span>(x=<span class="kw">X</span>,extrap=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">.7</span>,<span class="fl">.7</span>), beta=<span class="kw">beta0</span>) <span class="op">+</span> <span class="fl">.3</span><span class="op">*</span><span class="kw">H</span> <span class="op">+</span> <span class="fl">.2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="kw">n</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># data generating model</span>
+<span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">200</span>
+<span class="va">n.splines.true</span> <span class="op">&lt;-</span> <span class="fl">4</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
+<span class="va">beta0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n.splines.true</span>, <span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>
+<span class="va">alphaA</span> <span class="op">&lt;-</span> <span class="va">alphaEps</span> <span class="op">&lt;-</span> <span class="va">alphaH</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
+<span class="va">A</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>
+<span class="va">H</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>
+<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">alphaA</span><span class="op">*</span><span class="va">A</span> <span class="op">+</span> <span class="va">alphaH</span><span class="op">*</span><span class="va">H</span> <span class="op">+</span> <span class="va">alphaEps</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>
+<span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu">fX</span><span class="op">(</span>x<span class="op">=</span><span class="va">X</span>,extrap<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">.7</span>,<span class="fl">.7</span><span class="op">)</span>, beta<span class="op">=</span><span class="va">beta0</span><span class="op">)</span> <span class="op">+</span> <span class="fl">.3</span><span class="op">*</span><span class="va">H</span> <span class="op">+</span> <span class="fl">.2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>
 
-<span class="kw">x.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="op">-</span><span class="fl">2</span>,<span class="fl">2</span>,length.out=<span class="fl">100</span>)
-<span class="kw">f.new</span> <span class="op">&lt;-</span> <span class="fu">fX</span>(x=<span class="kw">x.new</span>,extrap=<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">.7</span>,<span class="fl">.7</span>), beta=<span class="kw">beta0</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">X</span>,<span class="kw">Y</span>, pch=<span class="fl">20</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="kw">x.new</span>,<span class="kw">f.new</span>,col=<span class="st">"#0072B2"</span>,lwd=<span class="fl">3</span>)
-</pre></div>
+<span class="va">x.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="fl">2</span>,length.out<span class="op">=</span><span class="fl">100</span><span class="op">)</span>
+<span class="va">f.new</span> <span class="op">&lt;-</span> <span class="fu">fX</span><span class="op">(</span>x<span class="op">=</span><span class="va">x.new</span>,extrap<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">.7</span>,<span class="fl">.7</span><span class="op">)</span>, beta<span class="op">=</span><span class="va">beta0</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">X</span>,<span class="va">Y</span>, pch<span class="op">=</span><span class="fl">20</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x.new</span>,<span class="va">f.new</span>,col<span class="op">=</span><span class="st">"#0072B2"</span>,lwd<span class="op">=</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
 <p>Given the observed dataset, let us now fit NILE.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/NILE.html">NILE</a></span>(<span class="kw">Y</span>, <span class="co"># response</span>
-            <span class="kw">X</span>, <span class="co"># predictors (so far, only 1-dim supported)</span>
-            <span class="kw">A</span>, <span class="co"># anchors (1 or 2-dim, although 2-dim is experimental so far)</span>
-            lambda.star = <span class="st">"test"</span>, <span class="co"># (0 = OLS, Inf = IV, (0,Inf) =</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/NILE.html">NILE</a></span><span class="op">(</span><span class="va">Y</span>, <span class="co"># response</span>
+            <span class="va">X</span>, <span class="co"># predictors (so far, only 1-dim supported)</span>
+            <span class="va">A</span>, <span class="co"># anchors (1 or 2-dim, although 2-dim is experimental so far)</span>
+            lambda.star <span class="op">=</span> <span class="st">"test"</span>, <span class="co"># (0 = OLS, Inf = IV, (0,Inf) =</span>
             <span class="co"># nonlinear anchor regression, "test" = NILE)</span>
-            test = <span class="st">"tsls.over.ols"</span>,
-            intercept = <span class="fl">TRUE</span>,
-            df = <span class="fl">50</span>, <span class="co"># number of splines used for X -&gt; Y</span>
-            p.min = <span class="fl">0.05</span>, <span class="co"># level at which test for lambda is performed</span>
-            x.new = <span class="kw">x.new</span>, <span class="co"># values at which predictions are required</span>
-            plot=<span class="fl">TRUE</span>, <span class="co"># diagnostics plots</span>
-            f.true = <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu">fX</span>(<span class="kw">x</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">.7</span>,<span class="fl">.7</span>), <span class="kw">beta0</span>), <span class="co"># if supplied, the</span>
+            test <span class="op">=</span> <span class="st">"tsls.over.ols"</span>,
+            intercept <span class="op">=</span> <span class="cn">TRUE</span>,
+            df <span class="op">=</span> <span class="fl">50</span>, <span class="co"># number of splines used for X -&gt; Y</span>
+            p.min <span class="op">=</span> <span class="fl">0.05</span>, <span class="co"># level at which test for lambda is performed</span>
+            x.new <span class="op">=</span> <span class="va">x.new</span>, <span class="co"># values at which predictions are required</span>
+            plot<span class="op">=</span><span class="cn">TRUE</span>, <span class="co"># diagnostics plots</span>
+            f.true <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">fX</span><span class="op">(</span><span class="va">x</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">.7</span>,<span class="fl">.7</span><span class="op">)</span>, <span class="va">beta0</span><span class="op">)</span>, <span class="co"># if supplied, the</span>
             <span class="co"># true causal function is added to the plot</span>
-            par.x = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(lambda=<span class="kw">NULL</span>, <span class="co"># positive smoothness penalty for X -&gt; Y,</span>
+            par.x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lambda<span class="op">=</span><span class="cn">NULL</span>, <span class="co"># positive smoothness penalty for X -&gt; Y,</span>
                          <span class="co"># if NULL, it is chosen by CV to minimize out-of-sample</span>
                          <span class="co"># AR objective</span>
-                         breaks=<span class="kw">NULL</span>, <span class="co"># if breaks are supplied, exactly these</span>
+                         breaks<span class="op">=</span><span class="cn">NULL</span>, <span class="co"># if breaks are supplied, exactly these</span>
                          <span class="co"># will be used for splines basis</span>
-                         num.breaks=<span class="fl">20</span>, <span class="co"># will result in num.breaks+2 splines,</span>
+                         num.breaks<span class="op">=</span><span class="fl">20</span>, <span class="co"># will result in num.breaks+2 splines,</span>
                          <span class="co"># ignored if breaks is supplied.</span>
-                         n.order=<span class="fl">4</span> <span class="co"># order of splines</span>
-                         ),
-            par.a = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(lambda=<span class="kw">NULL</span>, <span class="co"># positive smoothness penalty for fit of</span>
+                         n.order<span class="op">=</span><span class="fl">4</span> <span class="co"># order of splines</span>
+                         <span class="op">)</span>,
+            par.a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lambda<span class="op">=</span><span class="cn">NULL</span>, <span class="co"># positive smoothness penalty for fit of</span>
                          <span class="co"># residuals onto A. If NULL, we first compute the OLS</span>
                          <span class="co"># fit of Y onto X,</span>
                                       <span class="co"># and then choose lambdaA by CV to</span>
                          <span class="co"># minimize the out-of-sample MSE for predicting</span>
                          <span class="co"># the OLS residuals</span>
-                         breaks=<span class="kw">NULL</span>, <span class="co"># same as above</span>
-                         num.breaks=<span class="fl">4</span>, <span class="co"># same as above</span>
-                         n.order=<span class="fl">4</span> <span class="co"># same as above</span>
-                         ))
+                         breaks<span class="op">=</span><span class="cn">NULL</span>, <span class="co"># same as above</span>
+                         num.breaks<span class="op">=</span><span class="fl">4</span>, <span class="co"># same as above</span>
+                         n.order<span class="op">=</span><span class="fl">4</span> <span class="co"># same as above</span>
+                         <span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "lambda.cv.a =  1.42932324587573"</span>
 <span class="co">#&gt; [1] "lambda.cv.x =  0.0015933292003293"</span>
-<span class="co">#&gt; [1] "lambda.star.p.uncorr =  1.45538091659546"</span>
-</pre></div>
+<span class="co">#&gt; [1] "lambda.star.p.uncorr =  1.45538091659546"</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div id="references" class="section level2">
@@ -190,7 +181,7 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li>Browse source code at <br><a href="https://github.com/runesen/NILE/">https://​github.com/​runesen/​NILE/​</a>
 </li>
@@ -198,15 +189,18 @@
 </li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
 <li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
 </ul>
 </div>
+
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Rune Christiansen <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Niklas Pfister <br><small class="roles"> Author </small>  </li>
@@ -216,25 +210,28 @@
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="lifecycle"></a></li>
-<li><a href="https://travis-ci.org/runesen/NILE"><img src="https://travis-ci.org/runesen/NILE.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://codecov.io/gh/runesen/NILE?branch=master"><img src="https://codecov.io/gh/runesen/NILE/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://github.com/runesen/NILE/actions"><img src="https://github.com/runesen/NILE/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="lifecycle"></a></li>
+<li><a href="https://travis-ci.org/runesen/NILE" class="external-link"><img src="https://travis-ci.org/runesen/NILE.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://codecov.io/gh/runesen/NILE?branch=master" class="external-link"><img src="https://codecov.io/gh/runesen/NILE/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://github.com/runesen/NILE/actions" class="external-link"><img src="https://github.com/runesen/NILE/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Rune Christiansen, Niklas Pfister, Martin Emil Jakobsen, Nicola Gnecco, Jonas Peters.</p>
+  <p></p>
+<p>Developed by Rune Christiansen, Niklas Pfister, Martin Emil Jakobsen, Nicola Gnecco, Jonas Peters.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -242,6 +239,8 @@
 
   
 
+
+  
 
   </body>
 </html>

@@ -47,6 +47,8 @@ of \(X\)." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -58,9 +60,18 @@ of \(X\)." />
 
 
 
+<!-- dependencies from examples -->
+
+
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -81,12 +92,6 @@ of \(X\)." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -105,7 +110,7 @@ of \(X\)." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/runesen/NILE/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -133,22 +138,22 @@ that is assumed to linearly extrapolate outside of the support
 of \(X\).</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/NILE/man/NILE.html'>NILE</a></span>(
-  <span class='kw'>Y</span>,
-  <span class='kw'>X</span>,
-  <span class='kw'>A</span>,
-  lambda.star = <span class='st'>"test"</span>,
-  intercept = <span class='fl'>TRUE</span>,
-  df = <span class='fl'>100</span>,
-  x.new = <span class='kw'>NULL</span>,
-  test = <span class='st'>"penalized"</span>,
-  p.min = <span class='fl'>0.05</span>,
-  plot = <span class='fl'>TRUE</span>,
-  f.true = <span class='kw'>NULL</span>,
-  par.x = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  par.a = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  par.cv = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(num.folds = <span class='fl'>10</span>, optim = <span class='st'>"optimize"</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>NILE</span><span class='op'>(</span>
+  <span class='va'>Y</span>,
+  <span class='va'>X</span>,
+  <span class='va'>A</span>,
+  lambda.star <span class='op'>=</span> <span class='st'>"test"</span>,
+  intercept <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  df <span class='op'>=</span> <span class='fl'>100</span>,
+  x.new <span class='op'>=</span> <span class='cn'>NULL</span>,
+  test <span class='op'>=</span> <span class='st'>"penalized"</span>,
+  p.min <span class='op'>=</span> <span class='fl'>0.05</span>,
+  plot <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  f.true <span class='op'>=</span> <span class='cn'>NULL</span>,
+  par.x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  par.a <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  par.cv <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>num.folds <span class='op'>=</span> <span class='fl'>10</span>, optim <span class='op'>=</span> <span class='st'>"optimize"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -299,63 +304,67 @@ Available from <a href='https://arxiv.org/abs/2006.07433'>https://arxiv.org/abs/
     <p>Rune Christiansen <a href='mailto:krunechristiansen@math.ku.dk'>krunechristiansen@math.ku.dk</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>   <span class='kw'>n.splines.true</span> <span class='op'>&lt;-</span> <span class='fl'>4</span>
-   <span class='kw'>fX</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>extrap</span>, <span class='kw'>beta</span>){
-     <span class='kw'>bx</span> <span class='op'>&lt;-</span> <span class='kw'>splines</span>::<span class='fu'><a href='https://rdrr.io/r/splines/ns.html'>ns</a></span>(<span class='kw'>x</span>, knots = <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(from=<span class='kw'>extrap</span>[<span class='fl'>1</span>], to=<span class='kw'>extrap</span>[<span class='fl'>2</span>],
-                                      length.out=(<span class='kw'>n.splines.true</span><span class='op'>+</span><span class='fl'>1</span>))[
-                                        <span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='kw'>n.splines.true</span><span class='op'>+</span><span class='fl'>1</span>)],
-                       Boundary.knots = <span class='kw'>extrap</span>)
-     <span class='kw'>bx</span><span class='op'>%*%</span><span class='kw'>beta</span>
-   }
+    <pre class="examples"><div class='input'>   <span class='va'>n.splines.true</span> <span class='op'>&lt;-</span> <span class='fl'>4</span>
+   <span class='va'>fX</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>extrap</span>, <span class='va'>beta</span><span class='op'>)</span><span class='op'>{</span>
+     <span class='va'>bx</span> <span class='op'>&lt;-</span> <span class='fu'>splines</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/splines/ns.html'>ns</a></span><span class='op'>(</span><span class='va'>x</span>, knots <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>from<span class='op'>=</span><span class='va'>extrap</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, to<span class='op'>=</span><span class='va'>extrap</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span>,
+                                      length.out<span class='op'>=</span><span class='op'>(</span><span class='va'>n.splines.true</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span>
+                                        <span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='va'>n.splines.true</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>]</span>,
+                       Boundary.knots <span class='op'>=</span> <span class='va'>extrap</span><span class='op'>)</span>
+     <span class='va'>bx</span><span class='op'>%*%</span><span class='va'>beta</span>
+   <span class='op'>}</span>
 
    <span class='co'># data generating model</span>
-   <span class='kw'>n</span> <span class='op'>&lt;-</span> <span class='fl'>200</span>
-   <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>2</span>)
-   <span class='kw'>beta0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n.splines.true</span>, <span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>)
-   <span class='kw'>alphaA</span> <span class='op'>&lt;-</span> <span class='kw'>alphaEps</span> <span class='op'>&lt;-</span> <span class='kw'>alphaH</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='fl'>3</span>)
-   <span class='kw'>A</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>)
-   <span class='kw'>H</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>)
-   <span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='kw'>alphaA</span> <span class='op'>*</span> <span class='kw'>A</span> <span class='op'>+</span> <span class='kw'>alphaH</span> <span class='op'>*</span> <span class='kw'>H</span> <span class='op'>+</span> <span class='kw'>alphaEps</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>)
-   <span class='kw'>Y</span> <span class='op'>&lt;-</span> <span class='fu'>fX</span>(x=<span class='kw'>X</span>,extrap=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>.7</span>,<span class='fl'>.7</span>), beta=<span class='kw'>beta0</span>) <span class='op'>+</span> <span class='fl'>.3</span> <span class='op'>*</span> <span class='kw'>H</span> <span class='op'>+</span> <span class='fl'>.2</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='kw'>n</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span>)
+   <span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>200</span>
+   <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>)</span>
+   <span class='va'>beta0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n.splines.true</span>, <span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span><span class='op'>)</span>
+   <span class='va'>alphaA</span> <span class='op'>&lt;-</span> <span class='va'>alphaEps</span> <span class='op'>&lt;-</span> <span class='va'>alphaH</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>)</span>
+   <span class='va'>A</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span><span class='op'>)</span>
+   <span class='va'>H</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span><span class='op'>)</span>
+   <span class='va'>X</span> <span class='op'>&lt;-</span> <span class='va'>alphaA</span> <span class='op'>*</span> <span class='va'>A</span> <span class='op'>+</span> <span class='va'>alphaH</span> <span class='op'>*</span> <span class='va'>H</span> <span class='op'>+</span> <span class='va'>alphaEps</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span><span class='op'>)</span>
+   <span class='va'>Y</span> <span class='op'>&lt;-</span> <span class='fu'>fX</span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>X</span>,extrap<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>.7</span>,<span class='fl'>.7</span><span class='op'>)</span>, beta<span class='op'>=</span><span class='va'>beta0</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>.3</span> <span class='op'>*</span> <span class='va'>H</span> <span class='op'>+</span> <span class='fl'>.2</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='va'>n</span>,<span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>1</span><span class='op'>)</span>
 
-   <span class='kw'>x.new</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='op'>-</span><span class='fl'>2</span>,<span class='fl'>2</span>,length.out=<span class='fl'>100</span>)
-   <span class='kw'>f.new</span> <span class='op'>&lt;-</span> <span class='fu'>fX</span>(x=<span class='kw'>x.new</span>,extrap=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>.7</span>,<span class='fl'>.7</span>), beta=<span class='kw'>beta0</span>)
-   <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>X</span>,<span class='kw'>Y</span>, pch=<span class='fl'>20</span>)</div><div class='input'>   <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='kw'>x.new</span>,<span class='kw'>f.new</span>,col=<span class='st'>"#0072B2"</span>,lwd=<span class='fl'>3</span>)</div><div class='img'><img src='NILE-1.png' alt='' width='700' height='433' /></div><div class='input'>
+   <span class='va'>x.new</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>2</span>,<span class='fl'>2</span>,length.out<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
+   <span class='va'>f.new</span> <span class='op'>&lt;-</span> <span class='fu'>fX</span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>x.new</span>,extrap<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>.7</span>,<span class='fl'>.7</span><span class='op'>)</span>, beta<span class='op'>=</span><span class='va'>beta0</span><span class='op'>)</span>
+   <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>X</span>,<span class='va'>Y</span>, pch<span class='op'>=</span><span class='fl'>20</span><span class='op'>)</span>
+</div><div class='input'>   <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='va'>x.new</span>,<span class='va'>f.new</span>,col<span class='op'>=</span><span class='st'>"#0072B2"</span>,lwd<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span>
+</div><div class='img'><img src='NILE-1.png' alt='' width='700' height='433' /></div><div class='input'>
    <span class='co'>## FIT!</span>
-   <span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/NILE/man/NILE.html'>NILE</a></span>(<span class='kw'>Y</span>, <span class='co'># response</span>
-               <span class='kw'>X</span>, <span class='co'># predictors (so far, only 1-dim supported)</span>
-               <span class='kw'>A</span>, <span class='co'># anchors (1 or 2-dim, although 2-dim is experimental so far)</span>
-               lambda.star = <span class='st'>"test"</span>, <span class='co'># (0 = OLS, Inf = IV, (0,Inf) =</span>
+   <span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'>NILE</span><span class='op'>(</span><span class='va'>Y</span>, <span class='co'># response</span>
+               <span class='va'>X</span>, <span class='co'># predictors (so far, only 1-dim supported)</span>
+               <span class='va'>A</span>, <span class='co'># anchors (1 or 2-dim, although 2-dim is experimental so far)</span>
+               lambda.star <span class='op'>=</span> <span class='st'>"test"</span>, <span class='co'># (0 = OLS, Inf = IV, (0,Inf) =</span>
                <span class='co'># nonlinear anchor regression, "test" = NILE)</span>
-               test = <span class='st'>"penalized"</span>,
-               intercept = <span class='fl'>TRUE</span>,
-               df = <span class='fl'>50</span>, <span class='co'># number of splines used for X -&gt; Y</span>
-               p.min = <span class='fl'>0.05</span>, <span class='co'># level at which test for lambda is performed</span>
-               x.new = <span class='kw'>x.new</span>, <span class='co'># values at which predictions are required</span>
-               plot=<span class='fl'>TRUE</span>, <span class='co'># diagnostics plots</span>
-               f.true = <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'>fX</span>(<span class='kw'>x</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>.7</span>,<span class='fl'>.7</span>), <span class='kw'>beta0</span>), <span class='co'># if supplied, the</span>
+               test <span class='op'>=</span> <span class='st'>"penalized"</span>,
+               intercept <span class='op'>=</span> <span class='cn'>TRUE</span>,
+               df <span class='op'>=</span> <span class='fl'>50</span>, <span class='co'># number of splines used for X -&gt; Y</span>
+               p.min <span class='op'>=</span> <span class='fl'>0.05</span>, <span class='co'># level at which test for lambda is performed</span>
+               x.new <span class='op'>=</span> <span class='va'>x.new</span>, <span class='co'># values at which predictions are required</span>
+               plot<span class='op'>=</span><span class='cn'>TRUE</span>, <span class='co'># diagnostics plots</span>
+               f.true <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fu'>fX</span><span class='op'>(</span><span class='va'>x</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>.7</span>,<span class='fl'>.7</span><span class='op'>)</span>, <span class='va'>beta0</span><span class='op'>)</span>, <span class='co'># if supplied, the</span>
                <span class='co'># true causal function is added to the plot</span>
-               par.x = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(lambda=<span class='kw'>NULL</span>, <span class='co'># positive smoothness penalty for X -&gt; Y,</span>
+               par.x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>lambda<span class='op'>=</span><span class='cn'>NULL</span>, <span class='co'># positive smoothness penalty for X -&gt; Y,</span>
                             <span class='co'># if NULL, it is chosen by CV to minimize out-of-sample</span>
                             <span class='co'># AR objective</span>
-                            breaks=<span class='kw'>NULL</span>, <span class='co'># if breaks are supplied, exactly these</span>
+                            breaks<span class='op'>=</span><span class='cn'>NULL</span>, <span class='co'># if breaks are supplied, exactly these</span>
                             <span class='co'># will be used for splines basis</span>
-                            num.breaks=<span class='fl'>20</span>, <span class='co'># will result in num.breaks+2 splines,</span>
+                            num.breaks<span class='op'>=</span><span class='fl'>20</span>, <span class='co'># will result in num.breaks+2 splines,</span>
                             <span class='co'># ignored if breaks is supplied.</span>
-                            n.order=<span class='fl'>4</span> <span class='co'># order of splines</span>
-               ),
-               par.a = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(lambda=<span class='kw'>NULL</span>, <span class='co'># positive smoothness penalty for fit of</span>
+                            n.order<span class='op'>=</span><span class='fl'>4</span> <span class='co'># order of splines</span>
+               <span class='op'>)</span>,
+               par.a <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>lambda<span class='op'>=</span><span class='cn'>NULL</span>, <span class='co'># positive smoothness penalty for fit of</span>
                             <span class='co'># residuals onto A. If NULL, we first compute the OLS</span>
                             <span class='co'># fit of Y onto X,</span>
                             <span class='co'># and then choose lambdaA by CV to</span>
                             <span class='co'># minimize the out-of-sample MSE for predicting</span>
                             <span class='co'># the OLS residuals</span>
-                            breaks=<span class='kw'>NULL</span>, <span class='co'># same as above</span>
-                            num.breaks=<span class='fl'>4</span>, <span class='co'># same as above</span>
-                            n.order=<span class='fl'>4</span> <span class='co'># same as above</span>
-               ))</div><div class='output co'>#&gt; [1] "lambda.cv.a =  1.4293232458819"
+                            breaks<span class='op'>=</span><span class='cn'>NULL</span>, <span class='co'># same as above</span>
+                            num.breaks<span class='op'>=</span><span class='fl'>4</span>, <span class='co'># same as above</span>
+                            n.order<span class='op'>=</span><span class='fl'>4</span> <span class='co'># same as above</span>
+               <span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "lambda.cv.a =  1.4293232458819"
 #&gt; [1] "lambda.cv.x =  0.00159332920036247"
-#&gt; [1] "lambda.star.p.uncorr =  3.5873327255249"</div><div class='img'><img src='NILE-2.png' alt='' width='700' height='433' /></div><div class='input'></div></pre>
+#&gt; [1] "lambda.star.p.uncorr =  3.5873327255249"</div><div class='img'><img src='NILE-2.png' alt='' width='700' height='433' /></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -367,11 +376,11 @@ Available from <a href='https://arxiv.org/abs/2006.07433'>https://arxiv.org/abs/
 
       <footer>
       <div class="copyright">
-  <p>Developed by Rune Christiansen, Niklas Pfister, Martin Emil Jakobsen, Nicola Gnecco, Jonas Peters.</p>
+  <p><p>Developed by Rune Christiansen, Niklas Pfister, Martin Emil Jakobsen, Nicola Gnecco, Jonas Peters.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -379,6 +388,8 @@ Available from <a href='https://arxiv.org/abs/2006.07433'>https://arxiv.org/abs/
 
   
 
+
+  
 
   </body>
 </html>
