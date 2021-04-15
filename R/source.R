@@ -548,6 +548,19 @@ binary.search.lambda <- function(Y, BX, BA, p.min, test.statistic, quantile.func
 }
 
 
+#' Predict an AR model
+#'
+#' ... add description ...
+#'
+#' @param object Fitted object of class `AR`.
+#'
+#' @param xnew Numeric vector with test data.
+#'
+#' @param ... Dots. Currently ignored.
+#'
+#' @return Numeric vector with predictions
+#'
+#' @export
 predict.AR <- function(object, xnew, ...){
   BX <- object$BX # fitted base object
   basis <- BX$basis
